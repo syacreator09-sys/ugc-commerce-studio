@@ -1,0 +1,17 @@
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.env
+config/user-config.json
+storage/
+.external/
+.runtime/
+*.mp4
+*.mov
+*.wav
+*.mp3
+*.log
+dist/
+build/
+*.egg-info/
