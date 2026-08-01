@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.0",
+  "provider": "higgsfield",
+  "enabled": false,
+  "workflows": {
+    "marketing_studio": {
+      "model": "marketing_studio_video",
+      "recommended": true,
+      "generate_audio": true,
+      "resolution": "720p",
+      "aspect_ratio": "9:16"
+    },
+    "direct_scene": {
+      "models": ["kling3_0", "seedance_2_0"],
+      "requires_start_image": true,
+      "generate_audio": true,
+      "aspect_ratio": "9:16"
+    }
+  },
+  "allowed_modes": [
+    "ugc",
+    "ugc_how_to",
+    "ugc_unboxing",
+    "product_review",
+    "product_showcase",
+    "ugc_virtual_try_on"
+  ],
+  "execution": {
+    "sequential": true,
+    "max_retries": 3,
+    "backoff_seconds": [30, 60, 90],
+    "save_raw_evidence": true,
+    "resume_completed_scenes": true
+  }
+}
