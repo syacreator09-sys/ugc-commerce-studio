@@ -1,0 +1,40 @@
+{
+  "schema_version": "1.0",
+  "brand": {
+    "name": "Cano Digital",
+    "business_type": "owned_or_affiliate_products",
+    "audience": "es_MX",
+    "default_cta": "Revisa el precio actual en el enlace del producto"
+  },
+  "language": "es-LATAM",
+  "tone": "natural, conversational, trustworthy",
+  "default_mode": "ugc",
+  "default_workflow": "marketing_studio",
+  "video_model": "kling3_0",
+  "scene_duration_seconds": 5,
+  "aspect_ratio": "9:16",
+  "avatar": {
+    "type": "preset",
+    "id": "",
+    "description": "presentador UGC autorizado"
+  },
+  "higgsfield": {
+    "enabled": false,
+    "generate_audio": true,
+    "sequential": true,
+    "max_retries": 3,
+    "retry_backoff_seconds": [30, 60, 90]
+  },
+  "policies": {
+    "auto_publish": false,
+    "auto_activate_ads": false,
+    "auto_scale_budget": false,
+    "human_review_required": true,
+    "premium_generation_requires_approval": true,
+    "publication_mode": "draft_only"
+  },
+  "extra_corrections": {
+    "spoken": {},
+    "captions": {}
+  }
+}
