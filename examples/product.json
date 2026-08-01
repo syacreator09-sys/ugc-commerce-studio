@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0",
+  "product_id": "prod_demo_fan",
+  "ownership_type": "affiliate",
+  "platform": "tiktok_shop",
+  "title": "Ventilador portátil recargable",
+  "source_url": "https://example.com/product",
+  "price_amount": 499,
+  "currency": "MXN",
+  "availability": "available",
+  "affiliate_url": "https://example.com/affiliate-link",
+  "commission_value": 10,
+  "verified_benefits": [
+    "ofrece ventilación portátil mediante batería recargable"
+  ],
+  "prohibited_claims": [
+    "no afirmar duración de batería sin evidencia",
+    "no afirmar beneficios médicos"
+  ],
+  "media_assets": [
+    "./assets/product-front.jpg",
+    "./assets/product-side.jpg",
+    "./assets/product-detail.jpg"
+  ],
+  "commercial_rights_status": "approved"
+}
