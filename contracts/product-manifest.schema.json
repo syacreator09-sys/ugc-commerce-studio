@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cano.digital/schemas/product-manifest.schema.json",
+  "title": "ProductManifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "product_id",
+    "ownership_type",
+    "platform",
+    "title",
+    "verified_benefits",
+    "commercial_rights_status"
+  ],
+  "properties": {
+    "schema_version": {"type": "string"},
+    "product_id": {"type": "string", "minLength": 1},
+    "ownership_type": {"enum": ["owned", "affiliate"]},
+    "platform": {"type": "string", "minLength": 1},
+    "title": {"type": "string", "minLength": 1},
+    "source_url": {"type": ["string", "null"], "format": "uri"},
+    "price_amount": {"type": ["number", "null"], "minimum": 0},
+    "currency": {"type": "string", "minLength": 3, "maxLength": 3},
+    "availability": {"type": "string"},
+    "affiliate_url": {"type": ["string", "null"], "format": "uri"},
+    "commission_value": {"type": ["number", "null"], "minimum": 0},
+    "verified_benefits": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+    "prohibited_claims": {"type": "array", "items": {"type": "string"}},
+    "media_assets": {"type": "array", "items": {"type": "string"}},
+    "commercial_rights_status": {"enum": ["pending", "approved", "rejected"]}
+  }
+}
