@@ -5,9 +5,11 @@ from pathlib import Path
 
 import typer
 
-from .domain import Approval, ProductManifest, UGCProfile
+from .distribution import prepare_draft
+from .domain import Approval, ProductManifest, UGCPlan, UGCProfile
 from .higgsfield import HiggsfieldClient
 from .planner import build_plan
+from .sources import validate_product
 
 app = typer.Typer(help="Cano UGC Commerce Studio — Higgsfield-only product UGC engine")
 
@@ -25,6 +27,13 @@ def doctor() -> None:
         raise typer.Exit(1)
 
 
+@app.command("validate-product")
+def validate_product_command(product: Path = typer.Option(..., exists=True)) -> None:
+    model = read_model(product, ProductManifest)
+    warnings = validate_product(model)
+    typer.echo(json.dumps({"status": "PASS", "warnings": warnings}, indent=2))
+
+
 @app.command()
 def plan(
     product: Path = typer.Option(..., exists=True),
@@ -39,7 +48,13 @@ def plan(
     result = build_plan(product_model, profile_model, workflow=workflow, mode=mode, model=model)
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(result.model_dump_json(indent=2), encoding="utf-8")
-    typer.echo(json.dumps({"plan": str(output), "scope_id": result.scope_id, "paid_generation": False}, indent=2))
+    typer.echo(json.dumps({
+        "plan": str(output),
+        "scope_id": result.scope_id,
+        "opportunity": result.opportunity,
+        "scenes": len(result.scenes),
+        "paid_generation": False,
+    }, indent=2))
 
 
 @app.command()
@@ -60,11 +75,23 @@ def generate(
     approval_file: Path = typer.Option(..., "--approval", exists=True),
     output: Path = typer.Option(Path("storage/scenes")),
 ) -> None:
-    from .domain import UGCPlan
     plan_model = read_model(plan_file, UGCPlan)
     approval_model = read_model(approval_file, Approval)
     files = HiggsfieldClient().execute_plan(plan_model, approval_model, output)
     typer.echo(json.dumps([str(path) for path in files], indent=2))
+
+
+@app.command()
+def draft(
+    plan_file: Path = typer.Option(..., "--plan", exists=True),
+    master: Path = typer.Option(..., exists=True),
+    output: Path = typer.Option(Path("storage/publication-draft.json")),
+) -> None:
+    plan_model = read_model(plan_file, UGCPlan)
+    publication = prepare_draft(plan_model, master)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(publication.model_dump_json(indent=2), encoding="utf-8")
+    typer.echo(str(output))
 
 
 if __name__ == "__main__":
