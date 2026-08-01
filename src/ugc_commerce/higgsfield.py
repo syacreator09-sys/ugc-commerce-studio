@@ -25,14 +25,14 @@ class HiggsfieldClient:
     def doctor(self) -> dict[str, Any]:
         version = self._run(["higgsfield", "version"], allow_disabled=True)
         account = self._run(["higgsfield", "account", "status", "--json"], allow_disabled=True)
-        models = self._run(["higgsfield", "model", "get", "marketing_studio_video", "--json"], allow_disabled=True)
+        model = self._run(["higgsfield", "model", "get", "marketing_studio_video", "--json"], allow_disabled=True)
         authenticated = account.returncode == 0
         return {
             "enabled": self.enabled,
             "cli_installed": version.returncode == 0,
             "authenticated": authenticated,
-            "marketing_studio_available": models.returncode == 0,
-            "status": "CONNECTED" if self.enabled and authenticated and models.returncode == 0 else "NOT_CONNECTED",
+            "marketing_studio_available": model.returncode == 0,
+            "status": "CONNECTED" if self.enabled and authenticated and model.returncode == 0 else "NOT_CONNECTED",
         }
 
     def execute_plan(self, plan: UGCPlan, approval: Approval, output_dir: Path) -> list[Path]:
@@ -64,29 +64,38 @@ class HiggsfieldClient:
 
     def _ensure_product(self, plan: UGCPlan) -> str:
         if plan.product.source_url:
-            command = [
+            payload = self._run_json_with_retry([
                 "higgsfield", "marketing-studio", "products", "fetch",
                 "--url", str(plan.product.source_url), "--wait", "--json",
-            ]
-            payload = self._run_json_with_retry(command)
+            ])
             product_id = self._extract_id(payload)
             if product_id:
                 return product_id
 
-        if len(plan.product.media_assets) < 1:
+        if not plan.product.media_assets:
             raise HiggsfieldError("marketing_studio requires product source_url or authorized product media")
+
+        upload_ids: list[str] = []
+        for asset in plan.product.media_assets:
+            payload = self._run_json_with_retry([
+                "higgsfield", "upload", "create", asset, "--json",
+            ])
+            upload_id = self._extract_id(payload)
+            if not upload_id:
+                raise HiggsfieldError(f"upload ID not found for product asset: {asset}")
+            upload_ids.append(upload_id)
 
         command = [
             "higgsfield", "marketing-studio", "products", "create",
             "--title", plan.product.title,
             "--description", "; ".join(plan.product.verified_benefits),
         ]
-        for asset in plan.product.media_assets:
-            command.extend(["--image", asset])
-        payload = self._run_json_with_retry(command)
+        for upload_id in upload_ids:
+            command.extend(["--image", upload_id])
+        payload = self._run_json_with_retry(command + ["--json"])
         product_id = self._extract_id(payload)
         if not product_id:
-            raise HiggsfieldError("product ID not found after Marketing Studio import")
+            raise HiggsfieldError("product ID not found after Marketing Studio create")
         return product_id
 
     def _command_for_scene(self, plan: UGCPlan, scene: Scene, *, product_id: str | None) -> list[str]:
@@ -157,12 +166,15 @@ class HiggsfieldClient:
         items = payload if isinstance(payload, list) else [payload]
         for item in items:
             if isinstance(item, dict):
-                for key in ("id", "product_id", "uuid"):
+                for key in ("id", "product_id", "upload_id", "uuid"):
                     if item.get(key):
                         return str(item[key])
-                nested = item.get("product")
-                if isinstance(nested, dict) and nested.get("id"):
-                    return str(nested["id"])
+                for nested_key in ("product", "upload", "data"):
+                    nested = item.get(nested_key)
+                    if isinstance(nested, dict):
+                        for key in ("id", "product_id", "upload_id", "uuid"):
+                            if nested.get(key):
+                                return str(nested[key])
         return None
 
     @staticmethod
