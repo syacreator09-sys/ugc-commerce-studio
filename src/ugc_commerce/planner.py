@@ -3,6 +3,7 @@ from __future__ import annotations
 from .domain import ProductManifest, Scene, UGCPlan, UGCProfile
 from .intelligence import creative_matrix, opportunity_score
 from .normalizer import normalize_spoken
+from .sources import validate_product
 
 
 def build_scenes(product: ProductManifest, profile: UGCProfile) -> list[Scene]:
@@ -51,16 +52,12 @@ def build_plan(
     mode: str = "ugc",
     model: str = "kling3_0",
 ) -> UGCPlan:
-    if product.commercial_rights_status != "approved":
-        raise ValueError("commercial rights must be approved before planning")
-    if product.availability not in {"available", "in_stock"}:
-        raise ValueError("product must be available before planning")
-    if not product.verified_benefits:
-        raise ValueError("at least one verified benefit is required")
+    warnings = validate_product(product)
     if workflow == "direct_scene" and not product.media_assets:
         raise ValueError("direct_scene requires at least one authorized start image")
 
     opportunity = opportunity_score(product)
+    opportunity["warnings"] = warnings
     if opportunity["recommendation"] == "REJECT":
         raise ValueError("product opportunity score rejected the campaign")
 
