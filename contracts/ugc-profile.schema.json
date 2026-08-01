@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cano.digital/schemas/ugc-profile.schema.json",
+  "title": "UGCProfile",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["brand_name", "cta"],
+  "properties": {
+    "brand_name": {"type": "string", "minLength": 1},
+    "audience": {"type": "string"},
+    "cta": {"type": "string", "minLength": 1},
+    "language": {"type": "string"},
+    "tone": {"type": "string"},
+    "avatar_id": {"type": ["string", "null"]},
+    "avatar_type": {"enum": ["preset", "custom"]}
+  }
+}
