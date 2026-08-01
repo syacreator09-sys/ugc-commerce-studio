@@ -64,13 +64,17 @@ class HiggsfieldClient:
 
     def _ensure_product(self, plan: UGCPlan) -> str:
         if plan.product.source_url:
-            payload = self._run_json_with_retry([
-                "higgsfield", "marketing-studio", "products", "fetch",
-                "--url", str(plan.product.source_url), "--wait", "--json",
-            ])
-            product_id = self._extract_id(payload)
-            if product_id:
-                return product_id
+            try:
+                payload = self._run_json_with_retry([
+                    "higgsfield", "marketing-studio", "products", "fetch",
+                    "--url", str(plan.product.source_url), "--wait", "--json",
+                ])
+                product_id = self._extract_id(payload)
+                if product_id:
+                    return product_id
+            except HiggsfieldError:
+                if not plan.product.media_assets:
+                    raise
 
         if not plan.product.media_assets:
             raise HiggsfieldError("marketing_studio requires product source_url or authorized product media")
