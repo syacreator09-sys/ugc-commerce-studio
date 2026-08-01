@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from enum import StrEnum
 from hashlib import sha256
-from typing import Literal
+from typing import Any, Literal
 
 from pydantic import BaseModel, Field, HttpUrl
 
@@ -65,18 +65,33 @@ class UGCPlan(BaseModel):
     model: str
     product: ProductManifest
     profile: UGCProfile
+    opportunity: dict[str, Any]
+    creative_matrix: dict[str, Any]
     scenes: list[Scene]
     auto_publish: bool = False
     human_review_required: bool = True
 
     @classmethod
-    def create(cls, *, workflow: str, mode: str, model: str, product: ProductManifest, profile: UGCProfile, scenes: list[Scene]) -> "UGCPlan":
+    def create(
+        cls,
+        *,
+        workflow: str,
+        mode: str,
+        model: str,
+        product: ProductManifest,
+        profile: UGCProfile,
+        opportunity: dict[str, Any],
+        creative_matrix: dict[str, Any],
+        scenes: list[Scene],
+    ) -> "UGCPlan":
         payload = "|".join([
             workflow,
             mode,
             model,
             product.model_dump_json(),
             profile.model_dump_json(),
+            repr(opportunity),
+            repr(creative_matrix),
             "".join(scene.model_dump_json() for scene in scenes),
         ])
         digest = sha256(payload.encode("utf-8")).hexdigest()
@@ -88,6 +103,8 @@ class UGCPlan(BaseModel):
             model=model,
             product=product,
             profile=profile,
+            opportunity=opportunity,
+            creative_matrix=creative_matrix,
             scenes=scenes,
         )
 
