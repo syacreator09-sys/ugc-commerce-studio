@@ -39,7 +39,7 @@ def plan(
     result = build_plan(product_model, profile_model, workflow=workflow, mode=mode, model=model)
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(result.model_dump_json(indent=2), encoding="utf-8")
-    typer.echo(json.dumps({"plan": str(output), "scope_id": result.scope_id, "paid_generation": false}, indent=2))
+    typer.echo(json.dumps({"plan": str(output), "scope_id": result.scope_id, "paid_generation": False}, indent=2))
 
 
 @app.command()
