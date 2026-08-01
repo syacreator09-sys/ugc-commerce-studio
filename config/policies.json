@@ -1,0 +1,17 @@
+{
+  "schema_version": "1.0",
+  "auto_publish": false,
+  "auto_activate_ads": false,
+  "auto_scale_budget": false,
+  "human_review_required": true,
+  "premium_generation_requires_approval": true,
+  "publication_mode": "draft_only",
+  "explicit_likeness_consent_required": true,
+  "voice_consent_required": true,
+  "source_provenance_required": true,
+  "exact_product_media_is_source_of_truth": true,
+  "generated_product_geometry_requires_qa": true,
+  "ai_disclosure_required": true,
+  "commercial_disclosure_required": true,
+  "regulated_claims_require_specialist_review": true
+}
