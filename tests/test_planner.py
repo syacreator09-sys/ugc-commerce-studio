@@ -8,6 +8,9 @@ def product() -> ProductManifest:
         ownership_type="affiliate",
         platform="tiktok_shop",
         title="Producto demo",
+        availability="available",
+        affiliate_url="https://example.com/affiliate",
+        price_amount=499,
         verified_benefits=["resuelve una necesidad concreta"],
         commercial_rights_status="approved",
         media_assets=["front.jpg", "side.jpg", "detail.jpg"],
@@ -20,7 +23,9 @@ def profile() -> UGCProfile:
 
 def test_plan_is_dynamic_and_draft_only():
     plan = build_plan(product(), profile())
-    assert len(plan.scenes) == 4
+    assert len(plan.scenes) == 5
+    assert plan.opportunity["score"] >= 75
+    assert plan.creative_matrix["hooks"]
     assert plan.auto_publish is False
     assert plan.human_review_required is True
     assert plan.scope_id.startswith("scope_")
@@ -40,3 +45,13 @@ def test_missing_rights_fails_closed():
         assert "rights" in str(error)
     else:
         raise AssertionError("planning should fail without rights")
+
+
+def test_unavailable_product_fails_closed():
+    blocked = product().model_copy(update={"availability": "out_of_stock"})
+    try:
+        build_plan(blocked, profile())
+    except ValueError as error:
+        assert "available" in str(error)
+    else:
+        raise AssertionError("planning should fail for unavailable product")
