@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import shutil
 import subprocess
 import tempfile
 import time
@@ -160,8 +161,21 @@ class HiggsfieldClient:
     def _run(self, command: list[str], *, allow_disabled: bool = False) -> subprocess.CompletedProcess[str]:
         if not allow_disabled and not self.enabled:
             raise HiggsfieldError("Higgsfield is disabled")
+        # shutil.which() resolves platform executable suffixes (e.g. the
+        # npm-installed higgsfield.cmd on Windows), which a bare command
+        # name is not guaranteed to find via subprocess.run without shell=True.
+        resolved = shutil.which(command[0])
+        if resolved is None:
+            return subprocess.CompletedProcess(command, 127, "", "higgsfield CLI not found")
         try:
-            return subprocess.run(command, capture_output=True, text=True, timeout=1800, check=False)
+            return subprocess.run(
+                [resolved, *command[1:]],
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                timeout=1800,
+                check=False,
+            )
         except FileNotFoundError:
             return subprocess.CompletedProcess(command, 127, "", "higgsfield CLI not found")
 

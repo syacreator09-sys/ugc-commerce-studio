@@ -9,8 +9,14 @@ from pathlib import Path
 
 
 def command_ok(command: list[str]) -> bool:
+    # shutil.which() resolves platform executable suffixes (e.g. npm-installed
+    # .cmd shims on Windows), which subprocess.run does not do on its own
+    # without shell=True.
+    resolved = shutil.which(command[0])
+    if resolved is None:
+        return False
     try:
-        return subprocess.run(command, capture_output=True, text=True, timeout=30).returncode == 0
+        return subprocess.run([resolved, *command[1:]], capture_output=True, text=True, timeout=30).returncode == 0
     except (FileNotFoundError, subprocess.TimeoutExpired):
         return False
 
