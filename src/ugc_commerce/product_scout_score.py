@@ -45,10 +45,10 @@ class ScoutDecision(StrEnum):
 
 
 class ChannelFitTier(StrEnum):
-    PERFECT = "perfect"       # "Encaja perfectamente con el nicho" -> 20
-    GOOD = "good"              # "Encaja bastante bien" -> 12
-    SO_SO = "so_so"            # "Encaja más o menos" -> 5
-    NONE = "none"              # "No encaja" -> 0
+    PERFECT = "perfect"
+    GOOD = "good"
+    SO_SO = "so_so"
+    NONE = "none"
 
 
 _CHANNEL_FIT_POINTS: dict[ChannelFitTier, int] = {
@@ -61,36 +61,19 @@ _CHANNEL_FIT_POINTS: dict[ChannelFitTier, int] = {
 
 @dataclass(frozen=True)
 class ProductScoutInput:
-    """Structured, already-judged inputs to the rubric.
+    """Structured, already-judged inputs to the rubric."""
 
-    Callers (an LLM agent, a human, or a future automated estimator) are
-    responsible for producing these judgments from raw product data — this
-    function only applies the point math, it does not infer visual appeal,
-    channel fit, virality, or risk from a URL or description.
-    """
-
-    # 1. Comisión estimada (MXN)
-    commission_mxn: float
-
-    # 2. Potencial visual (3 yes/no sub-checks)
+    commission_mxn: float | None
     understandable_in_3s: bool
     has_clear_visual_change: bool
     is_photogenic: bool
-
-    # 3. Fit con el canal
     channel_fit: ChannelFitTier
-
-    # 4. Potencial viral (3 yes/no sub-checks)
     solves_specific_common_pain: bool
-    is_impulse_priced: bool  # accessible price, <$500 MXN ideal
+    is_impulse_priced: bool
     is_trending: bool
-
-    # 5. Riesgo (apply the single worst-applicable tier; None = sin riesgo)
     requires_medical_claims: bool = False
     requires_physical_demo_without_vto: bool = False
     has_known_platform_restrictions: bool = False
-
-    # 6. Facilidad de producción (3 yes/no sub-checks)
     has_good_url_images: bool = False
     no_real_action_video_required: bool = False
     simple_avatar_and_script: bool = False
@@ -102,14 +85,26 @@ class ProductScoutScore:
     visual_points: int
     channel_fit_points: int
     viral_points: int
-    risk_points: int  # <= 0
+    risk_points: int
     production_ease_points: int
     total: int
     decision: ScoutDecision
     reasons: list[str] = field(default_factory=list)
 
+    @property
+    def raw_score(self) -> int:
+        """Expose a public 0..90 UGC-fit score without changing legacy total semantics."""
+        return max(0, min(90, self.total))
 
-def _commission_points(commission_mxn: float) -> int:
+    @property
+    def normalized_score(self) -> float:
+        """Normalize the documented 90-point maximum to 0..100."""
+        return round(self.raw_score / 90 * 100, 2)
+
+
+def _commission_points(commission_mxn: float | None) -> int:
+    if commission_mxn is None:
+        return 0
     if commission_mxn >= 150:
         return 25
     if commission_mxn >= 80:
@@ -138,12 +133,7 @@ def _viral_points(inp: ProductScoutInput) -> int:
 
 
 def _risk_points(inp: ProductScoutInput) -> tuple[int, list[str]]:
-    """Worst-applicable single penalty, per the source doc's risk table.
-
-    The source doc lists the risk axis as a single-tier table (not additive
-    sub-checks like the other axes), so a product with multiple risk flags
-    still only takes the worst applicable penalty, not their sum.
-    """
+    """Apply only the single worst risk tier from the legacy rubric."""
     reasons: list[str] = []
     if inp.requires_medical_claims:
         reasons.append("riesgo: claims médicos necesarios (-10)")
@@ -166,7 +156,7 @@ def _production_ease_points(inp: ProductScoutInput) -> int:
 
 
 def score_product(inp: ProductScoutInput) -> ProductScoutScore:
-    """Apply the UGC Affiliate Factory 100-point rubric to structured inputs."""
+    """Apply the legacy UGC Affiliate Factory rubric to structured inputs."""
     commission_points = _commission_points(inp.commission_mxn)
     visual_points = _visual_points(inp)
     channel_fit_points = _CHANNEL_FIT_POINTS[inp.channel_fit]
@@ -184,8 +174,6 @@ def score_product(inp: ProductScoutInput) -> ProductScoutScore:
     )
 
     if inp.requires_medical_claims:
-        # Hard override: "Nunca aprobar productos con claims médicos sin
-        # importar el score" — RECHAZADO regardless of the numeric total.
         decision = ScoutDecision.RECHAZADO
         reasons.append("RECHAZADO por override de claims médicos (regla dura, sin excepciones)")
     elif total >= 60:

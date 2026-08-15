@@ -1,0 +1,20 @@
+{
+  "product_id": "demo-led-1",
+  "creative_id": "demo-led-hook-a-review-01",
+  "hook_id": "hook-a",
+  "video_id": "tiktok-video-placeholder",
+  "channel": "cano",
+  "category": "tech",
+  "format": "review",
+  "seller_name": "Demo seller",
+  "price_band": "500-999",
+  "presenter_id": "ugc-presenter-01",
+  "ugc_angle": "problem-solution",
+  "views": 1000,
+  "product_clicks": 20,
+  "orders": 2,
+  "gmv_mxn": 1798,
+  "organic_commission_mxn": 363.8,
+  "shop_ads_commission_mxn": 0,
+  "retention_pct": 42.5
+}

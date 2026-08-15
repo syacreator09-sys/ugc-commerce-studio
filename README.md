@@ -1,6 +1,6 @@
 # Cano UGC Commerce Studio
 
-Motor UGC para productos propios y afiliados, construido sobre **Higgsfield como único proveedor premium**.
+Motor canónico de **UGC Commerce** para productos propios y afiliados. Descubre/normaliza oportunidades, conserva evidencia y procedencia, calcula economics y UGC fit de forma determinista, decide si conviene solicitar muestra o producir, y usa **Higgsfield como único proveedor premium** para la generación.
 
 Higgsfield genera:
 
@@ -12,25 +12,137 @@ Higgsfield genera:
 
 Cano UGC Commerce Studio controla:
 
-- producto, precio, stock y evidencia;
-- derechos, claims y disclosures;
-- estrategia, hooks, guion y escenas;
+- discovery y normalización de candidatos;
+- producto, precio, stock, comisión y evidencia;
+- diferencia entre dato verificado, inferido, estimado y desconocido;
+- comisión orgánica y Shop Ads por separado;
+- economics, UGC fit, confidence y decisión de muestra/producción;
+- estrategia, hooks, guion y capacidad de variantes;
 - aprobación antes de consumir créditos;
 - ejecución secuencial, reintentos y resume;
 - descarga, captions, montaje y QA;
+- métricas reales, baselines históricos y recomendaciones de escala;
 - drafts para TikTok, Instagram, Amazon, Mercado Libre y productos propios.
 
 ## Estado
 
-`v0.4.0 — ready for authenticated Higgsfield pilot`
+`Product Intelligence Engine + Higgsfield production pipeline`
 
 No publica automáticamente, no activa anuncios y no consume créditos sin una aprobación explícita.
 
-## Flujo
+## Arquitectura canónica
+
+```text
+Discovery / URL / JSON / texto / captura interpretada
+→ ProductOfferSnapshot
+→ Evidence + Provenance
+→ UGC Fit + Economics + Demand
+→ Confidence
+→ Sample Decision + Production Decision
+→ Creative Capacity / test matrix
+→ ProductManifest + plan inmutable
+→ aprobación del scope exacto
+→ Higgsfield
+→ QA + draft
+→ analytics reales
+→ baselines históricos
+→ escalar / mantener / matar
+```
+
+**Regla de separación:** el LLM interpreta y extrae evidencia; Python valida, calcula y decide con reglas explícitas; el humano aprueba; Higgsfield produce.
+
+`cano-ai-command-center/01-offices/ugc-affiliate` es una superficie de control y referencia legacy. No es una dependencia runtime y no mantiene un segundo motor competidor.
+
+## Product Intelligence
+
+Los valores comerciales importantes usan estado de evidencia:
+
+```text
+VERIFIED | INFERRED | ESTIMATED | UNKNOWN
+```
+
+Un valor visible no se convierte en otro dato por inferencia. Ejemplo: si una invitación muestra `Earn $181.90` pero no muestra la moneda, el sistema conserva `181.90` como displayed earnings y deja la moneda en `UNKNOWN`. Tampoco calcula una comisión Shop Ads por venta si no conoce un precio verificado.
+
+La comisión orgánica y Shop Ads son independientes:
+
+```text
+organic_commission_per_sale = verified amount
+                           OR verified price × verified organic rate
+
+shop_ads_commission_per_sale = verified amount
+                            OR verified price × verified Shop Ads rate
+```
+
+El UGC fit histórico conserva sus thresholds originales. La rúbrica documentada suma realmente 90 puntos máximos, por lo que se exponen ambos valores:
+
+```text
+ugc_fit_raw_score        0..90
+ugc_fit_normalized_score raw / 90 × 100
+```
+
+No se inventaron 10 puntos para forzar un supuesto `/100`.
+
+## Decisiones separadas
+
+```text
+sample_decision:
+  SOLICITAR | NO_SOLICITAR | NEEDS_DATA
+
+production_decision:
+  PROCEDE | EN_ESPERA | RECHAZADO
+```
+
+Los hard gates —por ejemplo claims médicos requeridos, derechos rechazados, restricción bloqueante o conflicto crítico de evidencia— se aplican antes de la comisión. Una comisión alta nunca neutraliza un hard gate.
+
+## CLI de inteligencia
+
+Normalizar evidencia extraída de una invitación TikTok Shop:
+
+```bash
+python -m ugc_commerce.cli discover \
+  --source tiktok_invitation \
+  --input examples/tiktok-invitation-sparse.json
+```
+
+Calcular economics para un escenario explícito:
+
+```bash
+python -m ugc_commerce.cli economics \
+  --product offer.json \
+  --views 1000 \
+  --ctr 0.02 \
+  --cvr 0.05
+```
+
+Analizar un producto completo:
+
+```bash
+python -m ugc_commerce.cli scout --product product-intelligence-input.json
+```
+
+Los tres comandos son análisis/datos; **nunca disparan generación premium**.
+
+## Métricas posteriores
+
+El motor usa nombres económicos correctos:
+
+```text
+CTR = product_clicks / views
+CVR = orders / product_clicks
+commission_per_view = total_commission / views
+commission_per_1000_views = commission_per_view × 1000
+commission_per_order = total_commission / orders
+```
+
+`commission / views` no se llama CPV porque no es costo por vista.
+
+Los históricos se pueden agrupar por canal, categoría, hook y formato para reemplazar supuestos con resultados propios. V1 usa agregación determinista; no ML.
+
+## Flujo de producción existente
 
 ```text
 ProductManifest + UGCProfile
-→ Opportunity Score
+→ Opportunity Score legacy compatible
 → Creative Matrix
 → guion y escenas dinámicas
 → plan Higgsfield inmutable
@@ -42,6 +154,8 @@ ProductManifest + UGCProfile
 → QA humano
 → draft multicanal
 ```
+
+Los guiones afiliados no deben inventar uso personal, testimonios ni resultados. La plantilla base usa lenguaje de descubrimiento/revisión salvo que exista evidencia real de experiencia autorizada.
 
 ## Relación con el repositorio de Santi
 
@@ -56,7 +170,7 @@ imagen/avatar reutilizable
 → captions y master
 ```
 
-La ampliamos con productos verificables, afiliación, escenas dinámicas, approvals, idempotencia, QA, contratos y distribución draft-only.
+La ampliamos con productos verificables, afiliación, inteligencia económica, escenas dinámicas, approvals, idempotencia, QA, contratos y distribución draft-only.
 
 ## Instalación
 
@@ -137,15 +251,15 @@ publication_mode=draft_only
 
 ```text
 ugc-commerce-studio/
-├── src/ugc_commerce/          # motor Python y CLI
+├── src/ugc_commerce/          # motor Python, intelligence, analytics y CLI
 ├── contracts/                 # JSON Schemas
 ├── agents/                    # agentes especializados
 ├── skills/                    # skills para Claude Code y Codex
-├── workflows/                 # operación paso a paso
+├── workflow/                  # operación paso a paso
 ├── scripts/                   # bootstrap y piloto Higgsfield
-├── examples/                  # producto y perfil de ejemplo
+├── examples/                  # productos, perfiles e invitaciones
 ├── tests/                     # pruebas
-├── docs/                      # arquitectura y operación
+├── docs/                      # arquitectura y planes
 ├── AGENTS.md
 ├── CLAUDE.md
 ├── pyproject.toml

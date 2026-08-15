@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$defs": {
+    "ScenarioProjection": {
+      "properties": {
+        "name": {"title":"Name","type":"string"},
+        "views": {"title":"Views","type":"number","minimum":0},
+        "ctr": {"title":"Ctr","type":"number","minimum":0,"maximum":1},
+        "cvr": {"title":"Cvr","type":"number","minimum":0,"maximum":1},
+        "clicks": {"title":"Clicks","type":"number","minimum":0},
+        "orders": {"title":"Orders","type":"number","minimum":0},
+        "expected_orders_per_1000_views": {"title":"Expected Orders Per 1000 Views","type":"number","minimum":0},
+        "organic_revenue": {"type":["number","null"]},
+        "shop_ads_revenue": {"type":["number","null"]},
+        "expected_organic_commission_per_video": {"type":["number","null"]},
+        "expected_shop_ads_commission_per_video": {"type":["number","null"]},
+        "organic_commission_per_1000_views": {"type":["number","null"]},
+        "shop_ads_commission_per_1000_views": {"type":["number","null"]}
+      },
+      "required": [
+        "name","views","ctr","cvr","clicks","orders","expected_orders_per_1000_views",
+        "organic_revenue","shop_ads_revenue","expected_organic_commission_per_video",
+        "expected_shop_ads_commission_per_video","organic_commission_per_1000_views",
+        "shop_ads_commission_per_1000_views"
+      ],
+      "type": "object"
+    }
+  },
+  "properties": {
+    "currency": {"type":["string","null"]},
+    "test_cost_currency": {"type":"string"},
+    "organic_commission_per_sale": {"type":["number","null"]},
+    "shop_ads_commission_per_sale": {"type":["number","null"]},
+    "total_test_cost_mxn": {"type":"number","minimum":0},
+    "orders_to_break_even": {"type":["integer","null"]},
+    "scenarios": {"items":{"$ref":"#/$defs/ScenarioProjection"},"type":"array"},
+    "assumptions": {"items":{"type":"string"},"type":"array"},
+    "source_provenance": {"items":{"type":"string"},"type":"array"},
+    "missing_data": {"items":{"type":"string"},"type":"array"}
+  },
+  "required": [
+    "currency","test_cost_currency","organic_commission_per_sale","shop_ads_commission_per_sale",
+    "total_test_cost_mxn","orders_to_break_even","scenarios","assumptions","source_provenance","missing_data"
+  ],
+  "title": "AffiliateEconomics",
+  "type": "object"
+}
