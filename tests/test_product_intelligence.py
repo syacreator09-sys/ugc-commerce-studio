@@ -56,7 +56,8 @@ def test_sparse_invitation_report_keeps_181_90_currency_unknown():
         free_sample_available=EvidenceValue.verified(True, source="screenshot"),
         source_provenance=["screenshot"], commercial_rights_status="pending",
     )
-    report = analyze_product_offer(offer, scout(), creative())
+    report = analyze_product_offer(offer, scout(commission_mxn=None), creative())
+    assert report.ugc_score.commission_points == 0
     assert report.economics.currency is None
     assert report.economics.organic_commission_per_sale is None
     assert report.economics.shop_ads_commission_per_sale is None
