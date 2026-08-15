@@ -7,6 +7,7 @@
     "title": {"type":"string"},
     "platform": {"type":"string"},
     "seller_name": {"type":["string","null"]},
+    "source_provenance": {"type":"array","items":{"type":"string"}},
     "data_quality": {
       "type":"object",
       "properties": {
@@ -14,20 +15,23 @@
         "missing_data":{"type":"array","items":{"type":"string"}},
         "deductions":{"type":"object","additionalProperties":{"type":"integer"}}
       },
-      "required":["score"]
+      "required":["score","missing_data","deductions"]
     },
     "economics": {
       "type":"object",
       "properties": {
         "currency":{"type":["string","null"]},
+        "test_cost_currency":{"type":"string"},
         "organic_commission_per_sale":{"type":["number","null"]},
         "shop_ads_commission_per_sale":{"type":["number","null"]},
         "total_test_cost_mxn":{"type":"number"},
         "orders_to_break_even":{"type":["integer","null"]},
         "scenarios":{"type":"array"},
         "assumptions":{"type":"array","items":{"type":"string"}},
+        "source_provenance":{"type":"array","items":{"type":"string"}},
         "missing_data":{"type":"array","items":{"type":"string"}}
-      }
+      },
+      "required":["currency","organic_commission_per_sale","shop_ads_commission_per_sale","scenarios","assumptions","source_provenance","missing_data"]
     },
     "ugc_fit_raw_score":{"type":"integer","minimum":0,"maximum":90},
     "ugc_fit_normalized_score":{"type":"number","minimum":0,"maximum":100},
@@ -52,8 +56,9 @@
     "next_action":{"type":"string"}
   },
   "required":[
-    "product_id","title","platform","data_quality","economics",
+    "product_id","title","platform","source_provenance","data_quality","economics",
     "ugc_fit_raw_score","ugc_fit_normalized_score","ugc_legacy_decision","ugc_score",
-    "creative_capacity","demand","sample_decision","production_decision","next_action"
+    "creative_capacity","demand","risk","sample_decision","production_decision",
+    "recommended_initial_creatives","why","missing_data","next_action"
   ]
 }
