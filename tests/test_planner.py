@@ -55,3 +55,12 @@ def test_unavailable_product_fails_closed():
         assert "available" in str(error)
     else:
         raise AssertionError("planning should fail for unavailable product")
+
+
+def test_affiliate_plan_never_invents_personal_use_testimonial():
+    plan = build_plan(product(), profile())
+    text = " ".join(scene.natural_text.lower() for scene in plan.scenes)
+    assert "lo probé" not in text
+    assert "lo que más me gustó" not in text
+    hooks = " ".join(plan.creative_matrix["hooks"]).lower()
+    assert "lo probé" not in hooks
