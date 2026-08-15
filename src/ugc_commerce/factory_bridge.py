@@ -18,6 +18,12 @@ class CommerceOrderStatus(StrEnum):
     APPROVED = "APPROVED"
 
 
+class CommerceProductionMode(StrEnum):
+    UGC_HIGGSFIELD = "ugc_higgsfield"
+    AUTO_RECOMMENDED = "auto_recommended"
+    ECONOMY = "economy"
+
+
 class CommerceProductionOrderV1(BaseModel):
     schema_version: Literal["1.0"] = "1.0"
     order_id: str
@@ -34,6 +40,7 @@ class CommerceProductionOrderV1(BaseModel):
     seller_name: str | None = None
     source_url: str | None = None
     target_channel: str
+    production_mode: CommerceProductionMode = CommerceProductionMode.UGC_HIGGSFIELD
 
     creative_count: int = Field(ge=1, le=10)
     angles: list[str] = Field(min_length=1)
@@ -97,6 +104,7 @@ def build_factory_order(
     target_channel: str,
     angles: list[str],
     creative_count: int | None = None,
+    production_mode: CommerceProductionMode = CommerceProductionMode.UGC_HIGGSFIELD,
 ) -> CommerceProductionOrderV1:
     if intelligence.product_id != offer.product_id:
         raise ValueError("intelligence report does not match offer product_id")
@@ -123,6 +131,7 @@ def build_factory_order(
         "seller_name": offer.seller_name,
         "source_url": offer.source_url,
         "target_channel": target_channel,
+        "production_mode": production_mode.value,
         "creative_count": creative_count,
         "angles": distinct_angles[:creative_count],
         "verified_claims": list(offer.verified_benefits),
@@ -146,6 +155,8 @@ def approve_factory_order(order: CommerceProductionOrderV1, *, approved_by: str)
     actor = approved_by.strip()
     if not actor:
         raise ValueError("approved_by is required")
+    if actor.lower() in {"system", "agent", "claude", "codex", "automation"}:
+        raise ValueError("approved_by must identify a human approver")
     if not verify_order_scope(order):
         raise ValueError("order scope does not match immutable production intent")
     return order.model_copy(update={
