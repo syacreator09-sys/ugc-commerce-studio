@@ -18,6 +18,7 @@ class ProductIntelligenceReport(BaseModel):
     title: str
     platform: str
     seller_name: str | None = None
+    source_provenance: list[str] = Field(default_factory=list)
     data_quality: ConfidenceReport
     economics: AffiliateEconomics
     ugc_fit_raw_score: int
@@ -95,6 +96,7 @@ def analyze_product_offer(
         title=offer.title,
         platform=offer.platform,
         seller_name=offer.seller_name,
+        source_provenance=list(dict.fromkeys(offer.source_provenance)),
         data_quality=confidence,
         economics=economics,
         ugc_fit_raw_score=ugc.raw_score,
