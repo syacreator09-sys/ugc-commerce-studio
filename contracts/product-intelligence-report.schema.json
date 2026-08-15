@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ProductIntelligenceReport",
+  "type": "object",
+  "properties": {
+    "product_id": {"type":"string"},
+    "title": {"type":"string"},
+    "platform": {"type":"string"},
+    "seller_name": {"type":["string","null"]},
+    "data_quality": {
+      "type":"object",
+      "properties": {
+        "score":{"type":"integer","minimum":0,"maximum":100},
+        "missing_data":{"type":"array","items":{"type":"string"}},
+        "deductions":{"type":"object","additionalProperties":{"type":"integer"}}
+      },
+      "required":["score"]
+    },
+    "economics": {
+      "type":"object",
+      "properties": {
+        "currency":{"type":["string","null"]},
+        "organic_commission_per_sale":{"type":["number","null"]},
+        "shop_ads_commission_per_sale":{"type":["number","null"]},
+        "total_test_cost_mxn":{"type":"number"},
+        "orders_to_break_even":{"type":["integer","null"]},
+        "scenarios":{"type":"array"},
+        "assumptions":{"type":"array","items":{"type":"string"}},
+        "missing_data":{"type":"array","items":{"type":"string"}}
+      }
+    },
+    "ugc_fit_raw_score":{"type":"integer","minimum":0,"maximum":90},
+    "ugc_fit_normalized_score":{"type":"number","minimum":0,"maximum":100},
+    "ugc_legacy_decision":{"enum":["PROCEDE","EN_ESPERA","RECHAZADO"]},
+    "ugc_score":{"type":"object"},
+    "creative_capacity":{
+      "type":"object",
+      "properties":{
+        "score":{"type":"integer","minimum":0,"maximum":100},
+        "unique_counts":{"type":"object","additionalProperties":{"type":"integer"}},
+        "recommended_initial_creatives":{"oneOf":[{"type":"integer"},{"const":"10+"}]}
+      },
+      "required":["score","unique_counts","recommended_initial_creatives"]
+    },
+    "demand":{"type":"object"},
+    "risk":{"type":"array","items":{"type":"string"}},
+    "sample_decision":{"enum":["SOLICITAR","NO_SOLICITAR","NEEDS_DATA"]},
+    "production_decision":{"enum":["PROCEDE","EN_ESPERA","RECHAZADO"]},
+    "recommended_initial_creatives":{"oneOf":[{"type":"integer"},{"type":"string"}]},
+    "why":{"type":"array","items":{"type":"string"}},
+    "missing_data":{"type":"array","items":{"type":"string"}},
+    "next_action":{"type":"string"}
+  },
+  "required":[
+    "product_id","title","platform","data_quality","economics",
+    "ugc_fit_raw_score","ugc_fit_normalized_score","ugc_legacy_decision","ugc_score",
+    "creative_capacity","demand","sample_decision","production_decision","next_action"
+  ]
+}
