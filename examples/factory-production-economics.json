@@ -1,0 +1,15 @@
+{
+  "costs": {
+    "currency": "MXN",
+    "production_cost_mxn": 0,
+    "sample_cost_mxn": 0,
+    "generation_cost_mxn": 200,
+    "editing_cost_mxn": 100,
+    "other_cost_mxn": 0
+  },
+  "scenarios": [
+    {"name": "conservative", "views": 1000, "ctr": 0.01, "cvr": 0.03},
+    {"name": "base", "views": 5000, "ctr": 0.02, "cvr": 0.05},
+    {"name": "aggressive", "views": 10000, "ctr": 0.03, "cvr": 0.06}
+  ]
+}
