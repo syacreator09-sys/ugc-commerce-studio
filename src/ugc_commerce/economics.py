@@ -17,6 +17,7 @@ class EconomicsScenario(BaseModel):
 
 class ProductionCosts(BaseModel):
     currency: str = "MXN"
+    production_cost_mxn: float = Field(default=0, ge=0)
     sample_cost_mxn: float = Field(default=0, ge=0)
     generation_cost_mxn: float = Field(default=0, ge=0)
     editing_cost_mxn: float = Field(default=0, ge=0)
@@ -24,7 +25,13 @@ class ProductionCosts(BaseModel):
 
     @property
     def total(self) -> float:
-        return self.sample_cost_mxn + self.generation_cost_mxn + self.editing_cost_mxn + self.other_cost_mxn
+        return (
+            self.production_cost_mxn
+            + self.sample_cost_mxn
+            + self.generation_cost_mxn
+            + self.editing_cost_mxn
+            + self.other_cost_mxn
+        )
 
 
 class ScenarioProjection(BaseModel):
@@ -34,8 +41,11 @@ class ScenarioProjection(BaseModel):
     cvr: float
     clicks: float
     orders: float
+    expected_orders_per_1000_views: float
     organic_revenue: float | None = None
     shop_ads_revenue: float | None = None
+    expected_organic_commission_per_video: float | None = None
+    expected_shop_ads_commission_per_video: float | None = None
     organic_commission_per_1000_views: float | None = None
     shop_ads_commission_per_1000_views: float | None = None
 
@@ -49,6 +59,7 @@ class AffiliateEconomics(BaseModel):
     orders_to_break_even: int | None = None
     scenarios: list[ScenarioProjection] = Field(default_factory=list)
     assumptions: list[str] = Field(default_factory=list)
+    source_provenance: list[str] = Field(default_factory=list)
     missing_data: list[str] = Field(default_factory=list)
 
 
@@ -129,6 +140,7 @@ def calculate_affiliate_economics(
         organic_revenue = orders * organic if organic is not None else None
         shop_ads_revenue = orders * shop_ads if shop_ads is not None else None
         per_1000_factor = 0 if scenario.views == 0 else 1000 / scenario.views
+        expected_orders_per_1000 = 1000 * scenario.ctr * scenario.cvr
         projections.append(ScenarioProjection(
             name=scenario.name,
             views=scenario.views,
@@ -136,8 +148,11 @@ def calculate_affiliate_economics(
             cvr=scenario.cvr,
             clicks=clicks,
             orders=orders,
+            expected_orders_per_1000_views=expected_orders_per_1000,
             organic_revenue=organic_revenue,
             shop_ads_revenue=shop_ads_revenue,
+            expected_organic_commission_per_video=organic_revenue,
+            expected_shop_ads_commission_per_video=shop_ads_revenue,
             organic_commission_per_1000_views=(organic_revenue * per_1000_factor if organic_revenue is not None else None),
             shop_ads_commission_per_1000_views=(shop_ads_revenue * per_1000_factor if shop_ads_revenue is not None else None),
         ))
@@ -152,5 +167,6 @@ def calculate_affiliate_economics(
         orders_to_break_even=break_even,
         scenarios=projections,
         assumptions=assumptions,
+        source_provenance=list(dict.fromkeys(offer.source_provenance)),
         missing_data=list(dict.fromkeys(missing)),
     )
