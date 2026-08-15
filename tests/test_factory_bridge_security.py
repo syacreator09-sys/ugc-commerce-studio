@@ -50,6 +50,9 @@ def test_order_id_is_bound_to_scope():
 
 def test_agent_names_cannot_self_approve_factory_order():
     order = approved_candidate()
-    for actor in ("system", "agent", "claude", "codex", "automation"):
+    for actor in (
+        "system", "agent", "claude", "codex", "automation",
+        "Claude Code", "codex-cli", "automation-bot", "orchestrator agent",
+    ):
         with pytest.raises(ValueError, match="human"):
             approve_factory_order(order, approved_by=actor)
