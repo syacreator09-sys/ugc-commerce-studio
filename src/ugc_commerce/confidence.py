@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from datetime import datetime, timezone
+
 from pydantic import BaseModel, Field
 
 from .offers import EvidenceStatus, EvidenceValue, ProductOfferSnapshot
@@ -19,7 +21,12 @@ def _verified(value: EvidenceValue) -> bool:
     return value.value is not None and value.status == EvidenceStatus.VERIFIED
 
 
-def assess_data_confidence(offer: ProductOfferSnapshot) -> ConfidenceReport:
+def assess_data_confidence(
+    offer: ProductOfferSnapshot,
+    *,
+    now: datetime | None = None,
+    max_age_days: int = 7,
+) -> ConfidenceReport:
     score = 100
     missing: list[str] = []
     deductions: dict[str, int] = {}
@@ -64,6 +71,17 @@ def assess_data_confidence(offer: ProductOfferSnapshot) -> ConfidenceReport:
 
     if not offer.source_provenance:
         deduct("missing_provenance", 5)
+
+    if offer.verified_at is not None:
+        current = now or datetime.now(timezone.utc)
+        verified_at = offer.verified_at
+        if verified_at.tzinfo is None:
+            verified_at = verified_at.replace(tzinfo=timezone.utc)
+        if current.tzinfo is None:
+            current = current.replace(tzinfo=timezone.utc)
+        age_days = (current - verified_at).total_seconds() / 86400
+        if age_days > max_age_days:
+            deduct("stale_offer_evidence", 10)
 
     if offer.critical_evidence_conflict:
         deduct("critical_evidence_conflict", 30)
