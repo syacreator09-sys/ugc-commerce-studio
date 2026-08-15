@@ -9,10 +9,10 @@ from .sources import validate_product
 def build_scenes(product: ProductManifest, profile: UGCProfile) -> list[Scene]:
     benefit = product.verified_benefits[0] if product.verified_benefits else "resuelve una necesidad concreta"
     natural = [
-        f"Pensé que {product.title} era otro producto más, pero me sorprendió.",
-        f"Lo probé porque {benefit}.",
+        f"Pensé que {product.title} era otro producto más, pero esto es lo que sí vale la pena revisar.",
+        f"Me llamó la atención porque {benefit}.",
         "Te enseño cómo se ve y qué incluye, sin exagerar lo que hace.",
-        "Lo que más me gustó fue lo fácil que resulta entenderlo y usarlo.",
+        f"Lo importante aquí es que {benefit}.",
         profile.cta,
     ]
     goals = ["hook", "context", "demonstration", "verified_benefit", "cta"]
