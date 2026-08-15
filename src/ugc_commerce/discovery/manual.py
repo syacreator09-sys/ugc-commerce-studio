@@ -15,7 +15,12 @@ def _candidate_id(payload: dict[str, Any]) -> str:
 
 
 def _ev(payload: dict[str, Any], key: str, source: str) -> EvidenceValue:
-    return EvidenceValue.verified(payload[key], source=source) if key in payload and payload[key] is not None else EvidenceValue.unknown(source=source)
+    if key not in payload or payload[key] is None:
+        return EvidenceValue.unknown(source=source)
+    raw = payload[key]
+    if isinstance(raw, dict) and ("status" in raw or "value" in raw):
+        return EvidenceValue.model_validate(raw)
+    return EvidenceValue.verified(raw, source=source)
 
 
 class ManualDiscoveryProvider(DiscoveryProvider):
