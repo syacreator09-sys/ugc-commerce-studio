@@ -1,5 +1,8 @@
 import json
+
 from typer.testing import CliRunner
+
+import ugc_commerce.cli as cli_module
 from ugc_commerce.cli import app
 
 runner = CliRunner()
@@ -30,6 +33,40 @@ def performance_payload(creative_id="c1", *, channel="cano", format="review", co
         "product_id":"p1","creative_id":creative_id,"channel":channel,"format":format,
         "views":1000,"product_clicks":20,"orders":2,"organic_commission_mxn":commission,
     }
+
+
+def test_doctor_fails_when_higgsfield_is_enabled_but_auth_is_not_ready(monkeypatch):
+    class FakeClient:
+        def doctor(self):
+            return {
+                "enabled": True,
+                "cli_installed": True,
+                "authenticated": False,
+                "marketing_studio_available": False,
+                "status": "AUTH_REQUIRED",
+            }
+
+    monkeypatch.setattr(cli_module, "HiggsfieldClient", FakeClient)
+    result = runner.invoke(app, ["doctor"])
+    assert result.exit_code == 1
+    assert "AUTH_REQUIRED" in result.output
+
+
+def test_doctor_allows_analysis_only_mode_when_higgsfield_is_disabled(monkeypatch):
+    class FakeClient:
+        def doctor(self):
+            return {
+                "enabled": False,
+                "cli_installed": True,
+                "authenticated": False,
+                "marketing_studio_available": False,
+                "status": "DISABLED",
+            }
+
+    monkeypatch.setattr(cli_module, "HiggsfieldClient", FakeClient)
+    result = runner.invoke(app, ["doctor"])
+    assert result.exit_code == 0
+    assert "DISABLED" in result.output
 
 
 def test_scout_command_outputs_product_intelligence(tmp_path):
