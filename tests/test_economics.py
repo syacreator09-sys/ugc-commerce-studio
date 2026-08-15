@@ -61,24 +61,37 @@ def test_displayed_earnings_without_currency_is_not_treated_as_commission():
     assert "organic_commission" in result.missing_data
 
 
-def test_projection_uses_decimal_ctr_and_cvr():
+def test_projection_uses_decimal_ctr_and_cvr_and_exposes_per_video_values():
     result = calculate_affiliate_economics(
-        offer(organic_commission_amount=EvidenceValue.verified(100), currency=EvidenceValue.verified("MXN")),
+        offer(
+            organic_commission_amount=EvidenceValue.verified(100),
+            currency=EvidenceValue.verified("MXN"),
+            source_provenance=["affiliate detail"],
+        ),
         scenarios=[EconomicsScenario(name="base", views=1000, ctr=0.02, cvr=0.05)],
     )
     p = result.scenarios[0]
     assert p.clicks == 20
     assert p.orders == 1
+    assert p.expected_orders_per_1000_views == 1
     assert p.organic_revenue == 100
+    assert p.expected_organic_commission_per_video == 100
     assert p.organic_commission_per_1000_views == 100
+    assert result.source_provenance == ["affiliate detail"]
 
 
-def test_break_even_uses_total_optional_test_cost():
+def test_break_even_uses_all_optional_test_costs_including_flat_production_cost():
     result = calculate_affiliate_economics(
         offer(organic_commission_amount=EvidenceValue.verified(80), currency=EvidenceValue.verified("MXN")),
-        costs=ProductionCosts(sample_cost_mxn=0, generation_cost_mxn=100, editing_cost_mxn=20, other_cost_mxn=5),
+        costs=ProductionCosts(
+            production_cost_mxn=30,
+            sample_cost_mxn=0,
+            generation_cost_mxn=100,
+            editing_cost_mxn=20,
+            other_cost_mxn=5,
+        ),
     )
-    assert result.total_test_cost_mxn == 125
+    assert result.total_test_cost_mxn == 155
     assert result.orders_to_break_even == 2
 
 
