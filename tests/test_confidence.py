@@ -61,3 +61,21 @@ def test_critical_evidence_conflict_is_large_penalty():
     ))
     assert report.score <= 70
     assert "critical_evidence_conflict" in report.deductions
+
+
+def test_stale_verified_offer_is_penalized():
+    from datetime import datetime, timedelta, timezone
+    current = datetime(2026, 8, 14, tzinfo=timezone.utc)
+    stale = offer(
+        price_amount=EvidenceValue.verified(499),
+        currency=EvidenceValue.verified("MXN"),
+        organic_commission_amount=EvidenceValue.verified(80),
+        stock_status=EvidenceValue.verified("in_stock"),
+        sales_count=EvidenceValue.verified(1200),
+        review_count=EvidenceValue.verified(220),
+        source_provenance=["product detail"],
+        verified_at=current - timedelta(days=30),
+    )
+    report = assess_data_confidence(stale, now=current, max_age_days=7)
+    assert "stale_offer_evidence" in report.deductions
+    assert report.score < 100
