@@ -1,0 +1,42 @@
+{
+  "offer": {
+    "platform": "tiktok_shop",
+    "market": "MX",
+    "seller_name": "Demo seller",
+    "product_id": "demo-led-1",
+    "title": "Pantalla LED flexible",
+    "price_amount": {"value": 899, "status": "VERIFIED", "source": "product page"},
+    "currency": {"value": "MXN", "status": "VERIFIED", "source": "product page"},
+    "organic_commission_amount": {"value": 181.9, "status": "VERIFIED", "source": "affiliate detail"},
+    "shop_ads_commission_rate": {"value": 0.01, "status": "VERIFIED", "source": "affiliate detail"},
+    "free_sample_available": {"value": true, "status": "VERIFIED", "source": "invitation"},
+    "stock_status": {"value": "in_stock", "status": "VERIFIED", "source": "product page"},
+    "sales_count": {"value": 2500, "status": "VERIFIED", "source": "product page"},
+    "review_count": {"value": 450, "status": "VERIFIED", "source": "product page"},
+    "rating": {"value": 4.7, "status": "VERIFIED", "source": "product page"},
+    "commercial_rights_status": "approved",
+    "source_provenance": ["product page", "affiliate detail", "invitation"]
+  },
+  "scout": {
+    "commission_mxn": 181.9,
+    "understandable_in_3s": true,
+    "has_clear_visual_change": true,
+    "is_photogenic": true,
+    "channel_fit": "perfect",
+    "solves_specific_common_pain": true,
+    "is_impulse_priced": false,
+    "is_trending": true,
+    "has_good_url_images": true,
+    "no_real_action_video_required": false,
+    "simple_avatar_and_script": true
+  },
+  "creative_capacity": {
+    "hooks": ["transformación visual", "uso en negocio", "curiosidad", "setup creator"],
+    "audiences": ["negocios", "creadores"],
+    "use_cases": ["señalización", "setup", "eventos"],
+    "demonstrations": ["encendido", "mensaje animado", "flexibilidad"],
+    "objections": ["tamaño", "configuración"],
+    "transformations": ["apagado a encendido"],
+    "formats": ["demo", "pov", "review", "problem-solution", "tutorial"]
+  }
+}
