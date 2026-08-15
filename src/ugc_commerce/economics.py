@@ -16,6 +16,7 @@ class EconomicsScenario(BaseModel):
 
 
 class ProductionCosts(BaseModel):
+    currency: str = "MXN"
     sample_cost_mxn: float = Field(default=0, ge=0)
     generation_cost_mxn: float = Field(default=0, ge=0)
     editing_cost_mxn: float = Field(default=0, ge=0)
@@ -41,6 +42,7 @@ class ScenarioProjection(BaseModel):
 
 class AffiliateEconomics(BaseModel):
     currency: str | None = None
+    test_cost_currency: str = "MXN"
     organic_commission_per_sale: float | None = None
     shop_ads_commission_per_sale: float | None = None
     total_test_cost_mxn: float = 0
@@ -110,7 +112,14 @@ def calculate_affiliate_economics(
             missing.append("shop_ads_commission")
 
     total_cost = costs.total
-    break_even = math.ceil(total_cost / organic) if organic is not None and organic > 0 and total_cost > 0 else None
+    currency_matches_costs = currency is not None and currency.upper() == costs.currency.upper()
+    break_even = (
+        math.ceil(total_cost / organic)
+        if organic is not None and organic > 0 and total_cost > 0 and currency_matches_costs
+        else None
+    )
+    if total_cost > 0 and organic is not None and organic > 0 and not currency_matches_costs:
+        missing.append("break_even_currency_mismatch")
 
     projections: list[ScenarioProjection] = []
     assumptions: list[str] = []
@@ -136,6 +145,7 @@ def calculate_affiliate_economics(
 
     return AffiliateEconomics(
         currency=currency,
+        test_cost_currency=costs.currency,
         organic_commission_per_sale=organic,
         shop_ads_commission_per_sale=shop_ads,
         total_test_cost_mxn=total_cost,
