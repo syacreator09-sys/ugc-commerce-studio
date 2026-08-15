@@ -40,3 +40,17 @@ def test_tiktok_invitation_only_marks_currency_verified_when_explicit():
     assert offer.currency.value == "MXN"
     assert offer.currency.status == EvidenceStatus.VERIFIED
     assert offer.shop_ads_commission_rate.value == 0.01
+
+
+def test_manual_discovery_preserves_explicit_evidence_objects():
+    provider = ManualDiscoveryProvider()
+    candidate = provider.discover([{
+        "platform": "tiktok_shop",
+        "product_id": "p2",
+        "title": "Producto",
+        "price_amount": {"value": 500, "status": "INFERRED", "source": "copied text"},
+        "currency": {"value": "MXN", "status": "VERIFIED", "source": "product page"},
+    }])[0]
+    assert candidate.offer.price_amount.value == 500
+    assert candidate.offer.price_amount.status == EvidenceStatus.INFERRED
+    assert candidate.offer.currency.status == EvidenceStatus.VERIFIED
