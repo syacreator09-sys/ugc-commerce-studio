@@ -40,6 +40,7 @@ def test_complete_product_intelligence_report_proceeds():
     )
     assert report.data_quality.score >= 90
     assert report.economics.organic_commission_per_sale == 181.9
+    assert report.source_provenance == ["product page"]
     assert report.ugc_fit_raw_score == 90
     assert report.ugc_fit_normalized_score == 100
     assert report.sample_decision == SampleDecision.SOLICITAR
@@ -57,6 +58,7 @@ def test_sparse_invitation_report_keeps_181_90_currency_unknown():
         source_provenance=["screenshot"], commercial_rights_status="pending",
     )
     report = analyze_product_offer(offer, scout(commission_mxn=None), creative())
+    assert report.source_provenance == ["screenshot"]
     assert report.ugc_score.commission_points == 0
     assert report.economics.currency is None
     assert report.economics.organic_commission_per_sale is None
