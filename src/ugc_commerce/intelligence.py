@@ -50,3 +50,8 @@ def creative_matrix(product: ProductManifest) -> dict:
         "formats": ["ugc", "product_review", "ugc_how_to"],
         "blocked_claims": product.prohibited_claims,
     }
+
+
+# Additive canonical interface. Existing planning code continues to use the
+# legacy opportunity_score() and creative_matrix() functions above.
+from .product_intelligence import analyze_product_offer  # noqa: E402,F401
