@@ -20,6 +20,7 @@
   },
   "properties": {
     "currency": {"anyOf":[{"type":"string"},{"type":"null"}],"default":null,"title":"Currency"},
+    "test_cost_currency": {"default":"MXN","title":"Test Cost Currency","type":"string"},
     "organic_commission_per_sale": {"anyOf":[{"type":"number"},{"type":"null"}],"default":null,"title":"Organic Commission Per Sale"},
     "shop_ads_commission_per_sale": {"anyOf":[{"type":"number"},{"type":"null"}],"default":null,"title":"Shop Ads Commission Per Sale"},
     "total_test_cost_mxn": {"default":0,"title":"Total Test Cost Mxn","type":"number"},
