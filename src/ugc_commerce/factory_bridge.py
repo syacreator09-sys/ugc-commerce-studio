@@ -101,6 +101,12 @@ def verify_order_scope(order: CommerceProductionOrderV1) -> bool:
     return order.scope_id == computed and order.order_id == expected_order_id(computed)
 
 
+def _looks_like_machine_approver(actor: str) -> bool:
+    normalized = " ".join(actor.lower().replace("_", " ").replace("-", " ").split())
+    machine_markers = {"system", "agent", "claude", "codex", "automation", "bot"}
+    return any(marker in normalized.split() for marker in machine_markers)
+
+
 def build_factory_order(
     *,
     offer: ProductOfferSnapshot,
@@ -160,7 +166,7 @@ def approve_factory_order(order: CommerceProductionOrderV1, *, approved_by: str)
     actor = approved_by.strip()
     if not actor:
         raise ValueError("approved_by is required")
-    if actor.lower() in {"system", "agent", "claude", "codex", "automation"}:
+    if _looks_like_machine_approver(actor):
         raise ValueError("approved_by must identify a human approver")
     if not verify_order_scope(order):
         raise ValueError("order scope does not match immutable production intent")
