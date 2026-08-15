@@ -92,8 +92,13 @@ def compute_order_scope(payload: dict) -> str:
     return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
 
 
+def expected_order_id(scope_id: str) -> str:
+    return f"cpo-{scope_id[:20]}"
+
+
 def verify_order_scope(order: CommerceProductionOrderV1) -> bool:
-    return order.scope_id == compute_order_scope(_scope_payload(order))
+    computed = compute_order_scope(_scope_payload(order))
+    return order.scope_id == computed and order.order_id == expected_order_id(computed)
 
 
 def build_factory_order(
@@ -145,7 +150,7 @@ def build_factory_order(
     }
     scope_id = compute_order_scope(payload)
     return CommerceProductionOrderV1(
-        order_id=f"cpo-{scope_id[:20]}",
+        order_id=expected_order_id(scope_id),
         scope_id=scope_id,
         **payload,
     )
