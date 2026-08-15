@@ -11,7 +11,7 @@ from .higgsfield import HiggsfieldClient
 from .planner import build_plan
 from .sources import validate_product
 
-app = typer.Typer(help="Cano UGC Commerce Studio — Higgsfield-only product UGC engine")
+app = typer.Typer(help="Cano UGC Commerce Studio — product intelligence + approved Higgsfield UGC engine")
 
 
 def read_model(path: Path, model):
@@ -162,6 +162,55 @@ def discover(
     else:
         raise typer.BadParameter("source must be manual or tiktok_invitation")
     typer.echo(json.dumps([offer.model_dump(mode="json") for offer in offers], indent=2, ensure_ascii=False))
+
+
+@app.command()
+def performance(input_file: Path = typer.Option(..., "--input", exists=True)) -> None:
+    """Calculate deterministic post-publication UGC commerce metrics."""
+    from .performance import PublicationPerformance, calculate_performance
+
+    payload = _read_json(input_file)
+    if not isinstance(payload, dict):
+        raise typer.BadParameter("performance input must be a JSON object")
+    record = PublicationPerformance.model_validate(payload)
+    typer.echo(calculate_performance(record).model_dump_json(indent=2))
+
+
+@app.command("history-add")
+def history_add(
+    input_file: Path = typer.Option(..., "--input", exists=True),
+    history: Path = typer.Option(Path("storage/performance-history.jsonl"), "--history"),
+) -> None:
+    """Append one real publication observation to the owned performance dataset."""
+    from .history import append_history
+    from .performance import PublicationPerformance
+
+    payload = _read_json(input_file)
+    if not isinstance(payload, dict):
+        raise typer.BadParameter("history input must be a JSON object")
+    record = PublicationPerformance.model_validate(payload)
+    append_history(history, record)
+    typer.echo(json.dumps({"history": str(history), "creative_id": record.creative_id, "appended": True}))
+
+
+@app.command()
+def baselines(
+    history: Path = typer.Option(..., "--history", exists=True),
+    dimension: str = typer.Option(..., "--dimension"),
+) -> None:
+    """Aggregate empirical history by a supported business/creative dimension."""
+    from .history import build_baselines, load_history
+
+    supported = {"channel", "category", "hook_id", "format", "seller_name", "price_band", "presenter_id", "ugc_angle"}
+    if dimension not in supported:
+        raise typer.BadParameter("unsupported dimension: " + dimension)
+    records = load_history(history)
+    result = build_baselines(records, dimension=dimension)  # type: ignore[arg-type]
+    typer.echo(json.dumps({
+        "records": len(records),
+        "dimension": dimension,
+        "baselines": [item.model_dump(mode="json") for item in result],
+    }, indent=2, ensure_ascii=False))
 
 
 if __name__ == "__main__":
