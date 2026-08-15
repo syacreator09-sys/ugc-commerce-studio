@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "commerce-production-order-v1.schema.json",
+  "title": "CommerceProductionOrderV1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version","order_id","scope_id","status","created_at","product_id","title","platform","market","target_channel","production_mode","creative_count","angles","confidence_score","ugc_fit_raw_score","ugc_fit_normalized_score","economics"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "order_id": {"type": "string", "pattern": "^cpo-[0-9a-f]{20}$"},
+    "scope_id": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "status": {"enum": ["READY_FOR_APPROVAL", "APPROVED"]},
+    "created_at": {"type": "string", "format": "date-time"},
+    "approved_by": {"type": ["string", "null"]},
+    "approved_at": {"type": ["string", "null"], "format": "date-time"},
+    "product_id": {"type": "string"},
+    "title": {"type": "string"},
+    "platform": {"type": "string"},
+    "market": {"type": "string"},
+    "seller_name": {"type": ["string", "null"]},
+    "source_url": {"type": ["string", "null"]},
+    "target_channel": {"type": "string"},
+    "production_mode": {"enum": ["ugc_higgsfield", "auto_recommended", "economy"]},
+    "creative_count": {"type": "integer", "minimum": 1, "maximum": 10},
+    "angles": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+    "verified_claims": {"type": "array", "items": {"type": "string"}},
+    "prohibited_claims": {"type": "array", "items": {"type": "string"}},
+    "media_assets": {"type": "array", "items": {"type": "string"}},
+    "provenance": {"type": "array", "items": {"type": "string"}},
+    "confidence_score": {"type": "integer", "minimum": 0, "maximum": 100},
+    "ugc_fit_raw_score": {"type": "integer", "minimum": 0, "maximum": 90},
+    "ugc_fit_normalized_score": {"type": "number", "minimum": 0, "maximum": 100},
+    "economics": {
+      "type": "object",
+      "required": ["total_test_cost", "recommendation", "missing_data"],
+      "properties": {
+        "currency": {"type": ["string", "null"]},
+        "total_test_cost": {"type": "number", "minimum": 0},
+        "base_expected_commission": {"type": ["number", "null"]},
+        "base_net_benefit": {"type": ["number", "null"]},
+        "base_roi": {"type": ["number", "null"]},
+        "recommendation": {"enum": ["NEEDS_DATA", "NOT_ECONOMIC", "APPROVAL_REQUIRED"]},
+        "missing_data": {"type": "array", "items": {"type": "string"}}
+      }
+    }
+  }
+}
