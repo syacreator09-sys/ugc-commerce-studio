@@ -71,3 +71,19 @@ def test_medical_hard_gate_rejects_even_with_strong_economics():
     assert report.production_decision == ProductionDecision.RECHAZADO
     assert report.sample_decision == SampleDecision.NO_SOLICITAR
     assert report.risk
+
+
+def test_product_intelligence_derives_commission_score_from_verified_economics_not_llm_input():
+    offer = strong_offer(organic_commission_amount=EvidenceValue.verified(20))
+    report = analyze_product_offer(offer, scout(commission_mxn=999), creative())
+    assert report.economics.organic_commission_per_sale == 20
+    assert report.ugc_score.commission_points == 5
+
+
+def test_non_mxn_commission_is_not_scored_as_mxn():
+    offer = strong_offer(
+        currency=EvidenceValue.verified("USD"),
+        organic_commission_amount=EvidenceValue.verified(160),
+    )
+    report = analyze_product_offer(offer, scout(commission_mxn=160), creative())
+    assert report.ugc_score.commission_points == 0
