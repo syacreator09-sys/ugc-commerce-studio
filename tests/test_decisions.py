@@ -55,6 +55,14 @@ def test_strong_verified_candidate_requests_sample_and_proceeds():
     assert result.production_decision == ProductionDecision.PROCEDE
 
 
+def test_verified_zero_commission_rejects_affiliate_test_even_with_free_sample_and_high_ugc_fit():
+    o = complete_offer(organic_commission_amount=EvidenceValue.verified(0))
+    result = decide(o)
+    assert result.sample_decision == SampleDecision.NO_SOLICITAR
+    assert result.production_decision == ProductionDecision.RECHAZADO
+    assert any("zero" in reason.lower() or "positive" in reason.lower() for reason in result.reasons)
+
+
 def test_medical_claim_hard_gate_cannot_be_overridden_by_high_commission():
     o = complete_offer(requires_medical_claims=True)
     result = decide(o, strong_scout(requires_medical_claims=True))
