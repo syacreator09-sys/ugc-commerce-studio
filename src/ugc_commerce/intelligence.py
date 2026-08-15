@@ -45,7 +45,7 @@ def creative_matrix(product: ProductManifest) -> dict:
         "hooks": [
             f"Pensé que {product.title} era otro producto más.",
             f"Esto es lo primero que revisaría antes de comprar {product.title}.",
-            f"Lo probé porque {benefit}.",
+            f"Me llamó la atención porque {benefit}.",
         ],
         "formats": ["ugc", "product_review", "ugc_how_to"],
         "blocked_claims": product.prohibited_claims,
