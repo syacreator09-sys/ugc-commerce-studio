@@ -1,34 +1,47 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$defs": {
     "ScenarioProjection": {
       "properties": {
         "name": {"title":"Name","type":"string"},
-        "views": {"title":"Views","type":"number"},
-        "ctr": {"title":"Ctr","type":"number"},
-        "cvr": {"title":"Cvr","type":"number"},
-        "clicks": {"title":"Clicks","type":"number"},
-        "orders": {"title":"Orders","type":"number"},
-        "organic_revenue": {"anyOf":[{"type":"number"},{"type":"null"}],"default":null,"title":"Organic Revenue"},
-        "shop_ads_revenue": {"anyOf":[{"type":"number"},{"type":"null"}],"default":null,"title":"Shop Ads Revenue"},
-        "organic_commission_per_1000_views": {"anyOf":[{"type":"number"},{"type":"null"}],"default":null,"title":"Organic Commission Per 1000 Views"},
-        "shop_ads_commission_per_1000_views": {"anyOf":[{"type":"number"},{"type":"null"}],"default":null,"title":"Shop Ads Commission Per 1000 Views"}
+        "views": {"title":"Views","type":"number","minimum":0},
+        "ctr": {"title":"Ctr","type":"number","minimum":0,"maximum":1},
+        "cvr": {"title":"Cvr","type":"number","minimum":0,"maximum":1},
+        "clicks": {"title":"Clicks","type":"number","minimum":0},
+        "orders": {"title":"Orders","type":"number","minimum":0},
+        "expected_orders_per_1000_views": {"title":"Expected Orders Per 1000 Views","type":"number","minimum":0},
+        "organic_revenue": {"type":["number","null"]},
+        "shop_ads_revenue": {"type":["number","null"]},
+        "expected_organic_commission_per_video": {"type":["number","null"]},
+        "expected_shop_ads_commission_per_video": {"type":["number","null"]},
+        "organic_commission_per_1000_views": {"type":["number","null"]},
+        "shop_ads_commission_per_1000_views": {"type":["number","null"]}
       },
-      "required": ["name","views","ctr","cvr","clicks","orders"],
-      "title": "ScenarioProjection",
+      "required": [
+        "name","views","ctr","cvr","clicks","orders","expected_orders_per_1000_views",
+        "organic_revenue","shop_ads_revenue","expected_organic_commission_per_video",
+        "expected_shop_ads_commission_per_video","organic_commission_per_1000_views",
+        "shop_ads_commission_per_1000_views"
+      ],
       "type": "object"
     }
   },
   "properties": {
-    "currency": {"anyOf":[{"type":"string"},{"type":"null"}],"default":null,"title":"Currency"},
-    "test_cost_currency": {"default":"MXN","title":"Test Cost Currency","type":"string"},
-    "organic_commission_per_sale": {"anyOf":[{"type":"number"},{"type":"null"}],"default":null,"title":"Organic Commission Per Sale"},
-    "shop_ads_commission_per_sale": {"anyOf":[{"type":"number"},{"type":"null"}],"default":null,"title":"Shop Ads Commission Per Sale"},
-    "total_test_cost_mxn": {"default":0,"title":"Total Test Cost Mxn","type":"number"},
-    "orders_to_break_even": {"anyOf":[{"type":"integer"},{"type":"null"}],"default":null,"title":"Orders To Break Even"},
-    "scenarios": {"items":{"$ref":"#/$defs/ScenarioProjection"},"title":"Scenarios","type":"array"},
-    "assumptions": {"items":{"type":"string"},"title":"Assumptions","type":"array"},
-    "missing_data": {"items":{"type":"string"},"title":"Missing Data","type":"array"}
+    "currency": {"type":["string","null"]},
+    "test_cost_currency": {"type":"string"},
+    "organic_commission_per_sale": {"type":["number","null"]},
+    "shop_ads_commission_per_sale": {"type":["number","null"]},
+    "total_test_cost_mxn": {"type":"number","minimum":0},
+    "orders_to_break_even": {"type":["integer","null"]},
+    "scenarios": {"items":{"$ref":"#/$defs/ScenarioProjection"},"type":"array"},
+    "assumptions": {"items":{"type":"string"},"type":"array"},
+    "source_provenance": {"items":{"type":"string"},"type":"array"},
+    "missing_data": {"items":{"type":"string"},"type":"array"}
   },
+  "required": [
+    "currency","test_cost_currency","organic_commission_per_sale","shop_ads_commission_per_sale",
+    "total_test_cost_mxn","orders_to_break_even","scenarios","assumptions","source_provenance","missing_data"
+  ],
   "title": "AffiliateEconomics",
   "type": "object"
 }
