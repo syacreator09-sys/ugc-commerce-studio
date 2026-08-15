@@ -63,7 +63,7 @@ _CHANNEL_FIT_POINTS: dict[ChannelFitTier, int] = {
 class ProductScoutInput:
     """Structured, already-judged inputs to the rubric."""
 
-    commission_mxn: float
+    commission_mxn: float | None
     understandable_in_3s: bool
     has_clear_visual_change: bool
     is_photogenic: bool
@@ -102,7 +102,9 @@ class ProductScoutScore:
         return round(self.raw_score / 90 * 100, 2)
 
 
-def _commission_points(commission_mxn: float) -> int:
+def _commission_points(commission_mxn: float | None) -> int:
+    if commission_mxn is None:
+        return 0
     if commission_mxn >= 150:
         return 25
     if commission_mxn >= 80:
