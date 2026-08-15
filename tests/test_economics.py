@@ -87,3 +87,15 @@ def test_zero_or_unknown_commission_never_divides_by_zero():
     unknown = calculate_affiliate_economics(offer())
     assert zero.orders_to_break_even is None
     assert unknown.orders_to_break_even is None
+
+
+def test_break_even_requires_matching_commission_and_cost_currency():
+    result = calculate_affiliate_economics(
+        offer(
+            organic_commission_amount=EvidenceValue.verified(20),
+            currency=EvidenceValue.verified("USD"),
+        ),
+        costs=ProductionCosts(generation_cost_mxn=100),
+    )
+    assert result.orders_to_break_even is None
+    assert "break_even_currency_mismatch" in result.missing_data
