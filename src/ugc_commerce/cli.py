@@ -215,5 +215,95 @@ def baselines(
     }, indent=2, ensure_ascii=False))
 
 
+@app.command("factory-order")
+def factory_order(
+    product: Path = typer.Option(..., exists=True),
+    economics_file: Path = typer.Option(..., "--economics", exists=True),
+    channel: str = typer.Option(..., "--channel"),
+    angle: list[str] = typer.Option(..., "--angle"),
+    creative_count: int | None = typer.Option(None, "--creative-count", min=1, max=10),
+    output: Path = typer.Option(Path("storage/factory-order.json"), "--output"),
+) -> None:
+    """Build an immutable cost/benefit-gated Factory order; never produces media."""
+    from .creative_capacity import CreativeCapacityInput
+    from .factory_bridge import build_factory_order
+    from .offers import ProductOfferSnapshot
+    from .product_intelligence import analyze_product_offer
+    from .product_scout_score import ProductScoutInput
+    from .production_economics import ProductionEconomicsInput, analyze_production_cost_benefit
+
+    payload = _read_json(product)
+    if not isinstance(payload, dict) or "scout" not in payload or "creative_capacity" not in payload:
+        raise typer.BadParameter("product input must contain offer, scout, and creative_capacity objects")
+    economics_payload = _read_json(economics_file)
+    if not isinstance(economics_payload, dict):
+        raise typer.BadParameter("economics input must be a JSON object")
+
+    offer = ProductOfferSnapshot.model_validate(_offer_payload(payload))
+    scout_input = ProductScoutInput(**payload["scout"])
+    creative = CreativeCapacityInput.model_validate(payload["creative_capacity"])
+    intelligence = analyze_product_offer(offer, scout_input, creative)
+    economics_input = ProductionEconomicsInput.model_validate(economics_payload)
+    benefit = analyze_production_cost_benefit(offer, economics_input)
+    try:
+        order = build_factory_order(
+            offer=offer,
+            intelligence=intelligence,
+            economics=benefit,
+            target_channel=channel,
+            angles=angle,
+            creative_count=creative_count,
+        )
+    except ValueError as error:
+        raise typer.BadParameter(str(error)) from error
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(order.model_dump_json(indent=2), encoding="utf-8")
+    typer.echo(json.dumps({
+        "order": str(output),
+        "order_id": order.order_id,
+        "scope_id": order.scope_id,
+        "status": order.status,
+        "base_net_benefit": benefit.base_net_benefit,
+        "base_roi": benefit.base_roi,
+        "paid_generation": False,
+    }, indent=2, default=str))
+
+
+@app.command("factory-order-approve")
+def factory_order_approve(
+    order_file: Path = typer.Option(..., "--order", exists=True),
+    approved_by: str = typer.Option(..., "--approved-by"),
+    output: Path = typer.Option(Path("storage/factory-order-approved.json"), "--output"),
+) -> None:
+    """Explicitly approve one immutable Factory production order."""
+    from .factory_bridge import CommerceProductionOrderV1, approve_factory_order
+
+    order = read_model(order_file, CommerceProductionOrderV1)
+    try:
+        approved = approve_factory_order(order, approved_by=approved_by)
+    except ValueError as error:
+        raise typer.BadParameter(str(error)) from error
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(approved.model_dump_json(indent=2), encoding="utf-8")
+    typer.echo(json.dumps({"order": str(output), "order_id": approved.order_id, "status": approved.status}, default=str))
+
+
+@app.command("factory-receipt")
+def factory_receipt(
+    order_file: Path = typer.Option(..., "--order", exists=True),
+    receipt_file: Path = typer.Option(..., "--receipt", exists=True),
+) -> None:
+    """Validate Factory's receipt against the immutable approved order."""
+    from .factory_bridge import CommerceProductionOrderV1, FactoryProductionReceiptV1, validate_factory_receipt
+
+    order = read_model(order_file, CommerceProductionOrderV1)
+    receipt = read_model(receipt_file, FactoryProductionReceiptV1)
+    try:
+        validate_factory_receipt(order, receipt)
+    except ValueError as error:
+        raise typer.BadParameter(str(error)) from error
+    typer.echo(receipt.model_dump_json(indent=2))
+
+
 if __name__ == "__main__":
     app()
