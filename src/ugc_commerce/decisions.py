@@ -63,14 +63,23 @@ def decide_product(
         )
 
     reasons: list[str] = []
+    commission = economics.organic_commission_per_sale
     free_sample_verified = offer.free_sample_available.status == EvidenceStatus.VERIFIED
     free_sample_value = bool(offer.free_sample_available.value) if free_sample_verified else None
+
+    if commission is not None and commission <= 0:
+        return DecisionReport(
+            sample_decision=SampleDecision.NO_SOLICITAR,
+            production_decision=ProductionDecision.RECHAZADO,
+            reasons=["verified affiliate commission is zero or non-positive"],
+            recommended_initial_creatives=0,
+        )
 
     if free_sample_verified and free_sample_value is False:
         sample_decision = SampleDecision.NO_SOLICITAR
         reasons.append("free sample is explicitly unavailable")
     elif free_sample_verified and free_sample_value is True:
-        if confidence.score >= 70 and economics.organic_commission_per_sale is not None:
+        if confidence.score >= 70 and commission is not None and commission > 0:
             sample_decision = SampleDecision.SOLICITAR
             reasons.append("free sample plus sufficient verified economics")
         else:
@@ -86,7 +95,7 @@ def decide_product(
     elif confidence.score < 60:
         production_decision = ProductionDecision.EN_ESPERA
         reasons.append("data confidence below production threshold")
-    elif economics.organic_commission_per_sale is None:
+    elif commission is None:
         production_decision = ProductionDecision.EN_ESPERA
         reasons.append("organic commission is not verified/calculable")
     elif ugc_score.decision == ScoutDecision.RECHAZADO:
