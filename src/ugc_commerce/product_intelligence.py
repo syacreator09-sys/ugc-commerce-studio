@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import replace
 from typing import Iterable
 
 from pydantic import BaseModel, Field
@@ -42,8 +43,14 @@ def analyze_product_offer(
     scenarios: Iterable[EconomicsScenario] | None = None,
     costs: ProductionCosts | None = None,
 ) -> ProductIntelligenceReport:
-    ugc = score_product(scout_input)
     economics = calculate_affiliate_economics(offer, scenarios=scenarios, costs=costs)
+    commission_mxn = (
+        economics.organic_commission_per_sale
+        if economics.currency is not None and economics.currency.upper() == "MXN"
+        else None
+    )
+    effective_scout_input = replace(scout_input, commission_mxn=commission_mxn)
+    ugc = score_product(effective_scout_input)
     confidence = assess_data_confidence(offer)
     creative = assess_creative_capacity(creative_input)
     decision: DecisionReport = decide_product(
@@ -58,7 +65,7 @@ def analyze_product_offer(
     risk = [*decision.hard_gates]
     if offer.prohibited_claims:
         risk.append("prohibited claims present: " + ", ".join(offer.prohibited_claims))
-    if scout_input.requires_physical_demo_without_vto:
+    if effective_scout_input.requires_physical_demo_without_vto:
         risk.append("physical product demonstration required")
     if offer.has_known_platform_restrictions:
         risk.append("known platform restriction")
