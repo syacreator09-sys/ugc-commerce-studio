@@ -25,6 +25,13 @@ def composite_payload():
     }
 
 
+def performance_payload(creative_id="c1", *, channel="cano", format="review", commission=160):
+    return {
+        "product_id":"p1","creative_id":creative_id,"channel":channel,"format":format,
+        "views":1000,"product_clicks":20,"orders":2,"organic_commission_mxn":commission,
+    }
+
+
 def test_scout_command_outputs_product_intelligence(tmp_path):
     p=tmp_path/"product.json"; p.write_text(json.dumps(composite_payload()),encoding="utf-8")
     result=runner.invoke(app,["scout","--product",str(p)])
@@ -48,3 +55,31 @@ def test_discover_tiktok_invitation_preserves_unknown_currency(tmp_path):
     assert result.exit_code == 0, result.output
     data=json.loads(result.output)
     assert data[0]["displayed_earnings_currency"]["status"] == "UNKNOWN"
+
+
+def test_performance_command_calculates_real_metrics(tmp_path):
+    p=tmp_path/"performance.json"; p.write_text(json.dumps(performance_payload()),encoding="utf-8")
+    result=runner.invoke(app,["performance","--input",str(p)])
+    assert result.exit_code == 0, result.output
+    data=json.loads(result.output)
+    assert data["ctr"] == 0.02
+    assert data["cvr"] == 0.1
+    assert data["commission_per_1000_views"] == 160
+
+
+def test_history_add_and_baselines_commands_persist_and_analyze(tmp_path):
+    history=tmp_path/"performance.jsonl"
+    first=tmp_path/"first.json"; first.write_text(json.dumps(performance_payload("c1", commission=160)),encoding="utf-8")
+    second=tmp_path/"second.json"; second.write_text(json.dumps(performance_payload("c2", commission=80)),encoding="utf-8")
+
+    r1=runner.invoke(app,["history-add","--input",str(first),"--history",str(history)])
+    r2=runner.invoke(app,["history-add","--input",str(second),"--history",str(history)])
+    assert r1.exit_code == 0, r1.output
+    assert r2.exit_code == 0, r2.output
+
+    result=runner.invoke(app,["baselines","--history",str(history),"--dimension","channel"])
+    assert result.exit_code == 0, result.output
+    data=json.loads(result.output)
+    assert data["records"] == 2
+    assert data["baselines"][0]["key"] == "cano"
+    assert data["baselines"][0]["total_commission_mxn"] == 240
