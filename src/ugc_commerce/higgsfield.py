@@ -23,17 +23,75 @@ class HiggsfieldClient:
         self.enabled = enabled if enabled is not None else os.getenv("HIGGSFIELD_ENABLED", "false").lower() == "true"
         self.max_retries = max_retries
 
+    @staticmethod
+    def _error_text(result: subprocess.CompletedProcess[str]) -> str:
+        return (result.stderr or result.stdout or "").strip()
+
     def doctor(self) -> dict[str, Any]:
         version = self._run(["higgsfield", "version"], allow_disabled=True)
+        cli_installed = version.returncode == 0
+        if not cli_installed:
+            return {
+                "enabled": self.enabled,
+                "cli_installed": False,
+                "authenticated": False,
+                "marketing_studio_available": False,
+                "status": "CLI_MISSING",
+            }
+
         account = self._run(["higgsfield", "account", "status", "--json"], allow_disabled=True)
-        model = self._run(["higgsfield", "model", "get", "marketing_studio_video", "--json"], allow_disabled=True)
         authenticated = account.returncode == 0
+        model = (
+            self._run(["higgsfield", "model", "get", "marketing_studio_video", "--json"], allow_disabled=True)
+            if authenticated
+            else subprocess.CompletedProcess([], 1, "", "authentication required")
+        )
+        model_available = model.returncode == 0
+        if self.enabled and authenticated and model_available:
+            status = "CONNECTED"
+        elif not authenticated:
+            status = "AUTH_REQUIRED"
+        elif not model_available:
+            status = "MODEL_UNAVAILABLE"
+        else:
+            status = "DISABLED"
         return {
             "enabled": self.enabled,
-            "cli_installed": version.returncode == 0,
+            "cli_installed": True,
             "authenticated": authenticated,
-            "marketing_studio_available": model.returncode == 0,
-            "status": "CONNECTED" if self.enabled and authenticated and model.returncode == 0 else "NOT_CONNECTED",
+            "marketing_studio_available": model_available,
+            "status": status,
+        }
+
+    def preflight(self, plan: UGCPlan) -> dict[str, Any]:
+        """Validate the real CLI/auth/live model before any paid generation work."""
+        if not self.enabled:
+            raise HiggsfieldError("Higgsfield is disabled; authenticate and set HIGGSFIELD_ENABLED=true")
+
+        version = self._run(["higgsfield", "version"], allow_disabled=True)
+        if version.returncode != 0:
+            raise HiggsfieldError(
+                "Higgsfield CLI is not available. Install the official CLI, then run `higgsfield auth login`."
+            )
+
+        account = self._run(["higgsfield", "account", "status", "--json"], allow_disabled=True)
+        if account.returncode != 0:
+            detail = self._error_text(account)
+            suffix = f" ({detail[:240]})" if detail else ""
+            raise HiggsfieldError(f"Higgsfield authentication is not ready; run `higgsfield auth login`{suffix}")
+
+        model_name = "marketing_studio_video" if plan.workflow == "marketing_studio" else plan.model
+        model = self._run(["higgsfield", "model", "get", model_name, "--json"], allow_disabled=True)
+        if model.returncode != 0:
+            detail = self._error_text(model)
+            suffix = f" ({detail[:240]})" if detail else ""
+            raise HiggsfieldError(f"Higgsfield model `{model_name}` is unavailable in the live CLI schema{suffix}")
+
+        return {
+            "cli_installed": True,
+            "authenticated": True,
+            "model": model_name,
+            "model_available": True,
         }
 
     def execute_plan(self, plan: UGCPlan, approval: Approval, output_dir: Path) -> list[Path]:
@@ -41,6 +99,9 @@ class HiggsfieldClient:
             raise HiggsfieldError("Higgsfield is disabled; authenticate and set HIGGSFIELD_ENABLED=true")
         if approval.scope_id != plan.scope_id:
             raise HiggsfieldError("approval scope does not match immutable plan scope")
+
+        # Fail before product import/upload or generation if CLI/auth/live model is not ready.
+        self.preflight(plan)
 
         output_dir.mkdir(parents=True, exist_ok=True)
         product_id = self._ensure_product(plan) if plan.workflow == "marketing_studio" else None
@@ -68,7 +129,7 @@ class HiggsfieldClient:
             try:
                 payload = self._run_json_with_retry([
                     "higgsfield", "marketing-studio", "products", "fetch",
-                    "--url", str(plan.product.source_url), "--wait", "--json",
+                    "--url", str(plan.product.source_url), "--wait", "--wait-timeout", "20m", "--json",
                 ])
                 product_id = self._extract_id(payload)
                 if product_id:
@@ -114,7 +175,7 @@ class HiggsfieldClient:
                 "--aspect_ratio", "9:16",
                 "--duration", str(scene.duration_seconds),
                 "--start-image", plan.product.media_assets[0],
-                "--wait", "--json",
+                "--wait", "--wait-timeout", "20m", "--json",
             ]
             if plan.model == "seedance_2_0":
                 command.extend(["--resolution", "720p"])
@@ -137,7 +198,7 @@ class HiggsfieldClient:
         if plan.profile.avatar_id:
             avatar_file = self._json_argument([{"id": plan.profile.avatar_id, "type": plan.profile.avatar_type}])
             command.extend(["--avatars", f"@{avatar_file}"])
-        command.extend(["--wait", "--json"])
+        command.extend(["--wait", "--wait-timeout", "30m", "--json"])
         return command
 
     @staticmethod
@@ -147,16 +208,37 @@ class HiggsfieldClient:
             json.dump(value, handle)
         return handle.name
 
+    @staticmethod
+    def _non_retryable_cli_error(message: str) -> bool:
+        text = message.lower()
+        markers = (
+            "session expired",
+            "not authenticated",
+            "authentication",
+            "unknown model",
+            "unknown params",
+            "missing required params",
+            "invalid values",
+            "invalid value",
+            "not found",
+        )
+        return any(marker in text for marker in markers)
+
     def _run_json_with_retry(self, command: list[str]) -> Any:
         last_error = "unknown error"
         for attempt in range(1, self.max_retries + 1):
             result = self._run(command)
             if result.returncode == 0:
-                return json.loads(result.stdout)
-            last_error = (result.stderr or result.stdout).strip()
+                try:
+                    return json.loads(result.stdout)
+                except json.JSONDecodeError as error:
+                    raise HiggsfieldError(f"Higgsfield CLI returned invalid JSON: {error}") from error
+            last_error = self._error_text(result)
+            if self._non_retryable_cli_error(last_error):
+                break
             if attempt < self.max_retries:
                 time.sleep(attempt * 30)
-        raise HiggsfieldError(f"Higgsfield failed after {self.max_retries} attempts: {last_error[:500]}")
+        raise HiggsfieldError(f"Higgsfield failed: {last_error[:500]}")
 
     def _run(self, command: list[str], *, allow_disabled: bool = False) -> subprocess.CompletedProcess[str]:
         if not allow_disabled and not self.enabled:
@@ -173,11 +255,15 @@ class HiggsfieldClient:
                 capture_output=True,
                 text=True,
                 encoding="utf-8",
-                timeout=1800,
+                timeout=2100,
                 check=False,
             )
         except FileNotFoundError:
             return subprocess.CompletedProcess(command, 127, "", "higgsfield CLI not found")
+        except subprocess.TimeoutExpired as error:
+            stdout = error.stdout if isinstance(error.stdout, str) else ""
+            stderr = error.stderr if isinstance(error.stderr, str) else "Higgsfield CLI timed out"
+            return subprocess.CompletedProcess(command, 124, stdout, stderr)
 
     @staticmethod
     def _extract_id(payload: Any) -> str | None:
