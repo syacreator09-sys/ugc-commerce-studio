@@ -18,6 +18,14 @@ def read_model(path: Path, model):
     return model.model_validate_json(path.read_text(encoding="utf-8"))
 
 
+def _read_json(path: Path):
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _offer_payload(payload: dict):
+    return payload.get("offer", payload)
+
+
 @app.command()
 def doctor() -> None:
     """Check local dependencies and Higgsfield connection."""
@@ -92,6 +100,68 @@ def draft(
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(publication.model_dump_json(indent=2), encoding="utf-8")
     typer.echo(str(output))
+
+
+@app.command()
+def scout(product: Path = typer.Option(..., exists=True)) -> None:
+    """Analyze one structured affiliate offer without spending generation credits."""
+    from .creative_capacity import CreativeCapacityInput
+    from .offers import ProductOfferSnapshot
+    from .product_intelligence import analyze_product_offer
+    from .product_scout_score import ProductScoutInput
+
+    payload = _read_json(product)
+    if not isinstance(payload, dict) or "scout" not in payload or "creative_capacity" not in payload:
+        raise typer.BadParameter("scout input must contain offer, scout, and creative_capacity objects")
+    offer = ProductOfferSnapshot.model_validate(_offer_payload(payload))
+    scout_input = ProductScoutInput(**payload["scout"])
+    creative = CreativeCapacityInput.model_validate(payload["creative_capacity"])
+    report = analyze_product_offer(offer, scout_input, creative)
+    typer.echo(report.model_dump_json(indent=2))
+
+
+@app.command()
+def economics(
+    product: Path = typer.Option(..., exists=True),
+    views: float = typer.Option(1000, min=0),
+    ctr: float = typer.Option(..., min=0, max=1),
+    cvr: float = typer.Option(..., min=0, max=1),
+) -> None:
+    """Calculate deterministic affiliate economics for an explicit traffic scenario."""
+    from .economics import EconomicsScenario, calculate_affiliate_economics
+    from .offers import ProductOfferSnapshot
+
+    payload = _read_json(product)
+    if not isinstance(payload, dict):
+        raise typer.BadParameter("product input must be a JSON object")
+    offer = ProductOfferSnapshot.model_validate(_offer_payload(payload))
+    result = calculate_affiliate_economics(
+        offer,
+        scenarios=[EconomicsScenario(name="cli", views=views, ctr=ctr, cvr=cvr)],
+    )
+    typer.echo(result.model_dump_json(indent=2))
+
+
+@app.command()
+def discover(
+    source: str = typer.Option(..., help="manual or tiktok_invitation"),
+    input_file: Path = typer.Option(..., "--input", exists=True),
+) -> None:
+    """Normalize already-extracted product evidence; discovery never generates media."""
+    from .discovery.manual import ManualDiscoveryProvider
+    from .providers.tiktok_shop.invitation import normalize_tiktok_invitation
+
+    payload = _read_json(input_file)
+    items = payload if isinstance(payload, list) else [payload]
+    if not all(isinstance(item, dict) for item in items):
+        raise typer.BadParameter("discovery input must be a JSON object or list of objects")
+    if source == "manual":
+        offers = [candidate.offer for candidate in ManualDiscoveryProvider().discover(items)]
+    elif source == "tiktok_invitation":
+        offers = [normalize_tiktok_invitation(item, source="tiktok_invitation") for item in items]
+    else:
+        raise typer.BadParameter("source must be manual or tiktok_invitation")
+    typer.echo(json.dumps([offer.model_dump(mode="json") for offer in offers], indent=2, ensure_ascii=False))
 
 
 if __name__ == "__main__":
