@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "factory-production-receipt-v1.schema.json",
+  "title": "FactoryProductionReceiptV1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version","order_id","scope_id","factory","status","production_job_ids","idea_ids","additional_approval_required","additional_approval_gates","message"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "order_id": {"type": "string"},
+    "scope_id": {"type": "string"},
+    "factory": {"const": "factory-ia-channel-v5"},
+    "status": {"type": "string"},
+    "production_job_ids": {"type": "array", "items": {"type": "integer"}},
+    "idea_ids": {"type": "array", "items": {"type": "integer"}},
+    "additional_approval_required": {"type": "boolean"},
+    "additional_approval_gates": {"type": "array", "items": {"type": "string"}},
+    "received_at": {"type": ["string", "null"], "format": "date-time"},
+    "message": {"type": "string"}
+  }
+}
