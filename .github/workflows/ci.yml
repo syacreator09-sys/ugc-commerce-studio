@@ -37,17 +37,26 @@ jobs:
           python -m ugc_commerce.cli discover --source tiktok_invitation --input examples/tiktok-invitation-sparse.json > /tmp/discovery.json
           python -m ugc_commerce.cli economics --product examples/product-intelligence-input.json --views 1000 --ctr 0.02 --cvr 0.05 > /tmp/economics.json
           python -m ugc_commerce.cli scout --product examples/product-intelligence-input.json > /tmp/scout.json
+          python -m ugc_commerce.cli performance --input examples/performance.json > /tmp/performance.json
+          python -m ugc_commerce.cli history-add --input examples/performance.json --history /tmp/performance-history.jsonl > /tmp/history-add.json
+          python -m ugc_commerce.cli baselines --history /tmp/performance-history.jsonl --dimension channel > /tmp/baselines.json
           python - <<'PY'
           import json
           from pathlib import Path
           discovery = json.loads(Path('/tmp/discovery.json').read_text())
           economics = json.loads(Path('/tmp/economics.json').read_text())
           scout = json.loads(Path('/tmp/scout.json').read_text())
+          performance = json.loads(Path('/tmp/performance.json').read_text())
+          baselines = json.loads(Path('/tmp/baselines.json').read_text())
           assert discovery[0]['displayed_earnings_currency']['status'] == 'UNKNOWN'
           assert economics['organic_commission_per_sale'] == 181.9
           assert economics['shop_ads_commission_per_sale'] == 8.99
+          assert economics['scenarios'][0]['expected_orders_per_1000_views'] == 1.0
           assert scout['production_decision'] == 'PROCEDE'
           assert scout['sample_decision'] == 'SOLICITAR'
+          assert performance['commission_per_1000_views'] == 363.8
+          assert baselines['records'] == 1
+          assert baselines['baselines'][0]['key'] == 'cano'
           PY
 
       - name: Doctor
