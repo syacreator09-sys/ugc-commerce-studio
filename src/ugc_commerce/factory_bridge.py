@@ -138,7 +138,7 @@ def build_factory_order(
         "prohibited_claims": list(offer.prohibited_claims),
         "media_assets": list(offer.media_assets),
         "provenance": list(dict.fromkeys(offer.source_provenance)),
-        "confidence_score": intelligence.confidence_score,
+        "confidence_score": intelligence.data_quality.score,
         "ugc_fit_raw_score": intelligence.ugc_fit_raw_score,
         "ugc_fit_normalized_score": intelligence.ugc_fit_normalized_score,
         "economics": economics.model_dump(mode="json"),
