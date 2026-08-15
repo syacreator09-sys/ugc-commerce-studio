@@ -11,13 +11,17 @@ class PublicationPerformance(BaseModel):
     channel: str | None = None
     category: str | None = None
     format: str | None = None
+    seller_name: str | None = None
+    price_band: str | None = None
+    presenter_id: str | None = None
+    ugc_angle: str | None = None
     views: int = Field(default=0, ge=0)
     product_clicks: int = Field(default=0, ge=0)
     orders: int = Field(default=0, ge=0)
     gmv_mxn: float = Field(default=0, ge=0)
     organic_commission_mxn: float = Field(default=0, ge=0)
     shop_ads_commission_mxn: float = Field(default=0, ge=0)
-    retention_pct: float | None = Field(default=None, ge=0)
+    retention_pct: float | None = Field(default=None, ge=0, le=100)
 
 
 class PerformanceMetrics(BaseModel):
