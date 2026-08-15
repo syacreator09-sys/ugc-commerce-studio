@@ -32,5 +32,23 @@ jobs:
       - name: Test
         run: pytest -q
 
+      - name: Intelligence CLI smoke
+        run: |
+          python -m ugc_commerce.cli discover --source tiktok_invitation --input examples/tiktok-invitation-sparse.json > /tmp/discovery.json
+          python -m ugc_commerce.cli economics --product examples/product-intelligence-input.json --views 1000 --ctr 0.02 --cvr 0.05 > /tmp/economics.json
+          python -m ugc_commerce.cli scout --product examples/product-intelligence-input.json > /tmp/scout.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          discovery = json.loads(Path('/tmp/discovery.json').read_text())
+          economics = json.loads(Path('/tmp/economics.json').read_text())
+          scout = json.loads(Path('/tmp/scout.json').read_text())
+          assert discovery[0]['displayed_earnings_currency']['status'] == 'UNKNOWN'
+          assert economics['organic_commission_per_sale'] == 181.9
+          assert economics['shop_ads_commission_per_sale'] == 8.99
+          assert scout['production_decision'] == 'PROCEDE'
+          assert scout['sample_decision'] == 'SOLICITAR'
+          PY
+
       - name: Doctor
         run: python scripts/doctor.py --config config/user-config.example.json
