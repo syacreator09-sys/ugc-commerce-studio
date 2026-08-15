@@ -33,6 +33,8 @@ def doctor() -> None:
     typer.echo(json.dumps(status, indent=2))
     if not status["cli_installed"]:
         raise typer.Exit(1)
+    if status.get("enabled") and status.get("status") != "CONNECTED":
+        raise typer.Exit(1)
 
 
 @app.command("validate-product")
