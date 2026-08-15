@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections import defaultdict
+from pathlib import Path
 from typing import Literal
 
 from pydantic import BaseModel
@@ -8,7 +9,16 @@ from pydantic import BaseModel
 from .performance import PublicationPerformance
 
 
-HistoryDimension = Literal["channel", "category", "hook_id", "format"]
+HistoryDimension = Literal[
+    "channel",
+    "category",
+    "hook_id",
+    "format",
+    "seller_name",
+    "price_band",
+    "presenter_id",
+    "ugc_angle",
+]
 
 
 class HistoricalBaseline(BaseModel):
@@ -22,6 +32,31 @@ class HistoricalBaseline(BaseModel):
     ctr: float
     cvr: float
     commission_per_1000_views: float
+
+
+def append_history(path: Path, record: PublicationPerformance) -> None:
+    """Append one real observation to an owned JSONL performance dataset."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("a", encoding="utf-8") as handle:
+        handle.write(record.model_dump_json())
+        handle.write("\n")
+
+
+def load_history(path: Path) -> list[PublicationPerformance]:
+    """Load persisted observations without fabricating a baseline for missing files."""
+    if not path.exists():
+        return []
+    records: list[PublicationPerformance] = []
+    with path.open("r", encoding="utf-8") as handle:
+        for line_number, line in enumerate(handle, start=1):
+            text = line.strip()
+            if not text:
+                continue
+            try:
+                records.append(PublicationPerformance.model_validate_json(text))
+            except Exception as error:
+                raise ValueError(f"invalid performance history at line {line_number}: {error}") from error
+    return records
 
 
 def build_baselines(records: list[PublicationPerformance], *, dimension: HistoryDimension) -> list[HistoricalBaseline]:
