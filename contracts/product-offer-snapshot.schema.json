@@ -1,0 +1,105 @@
+{
+  "$defs": {
+    "EvidenceStatus": {
+      "enum": [
+        "VERIFIED",
+        "INFERRED",
+        "ESTIMATED",
+        "UNKNOWN"
+      ],
+      "title": "EvidenceStatus",
+      "type": "string"
+    },
+    "EvidenceValue": {
+      "properties": {
+        "value": {
+          "anyOf": [
+            {},
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Value"
+        },
+        "status": {
+          "$ref": "#/$defs/EvidenceStatus",
+          "default": "UNKNOWN"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        },
+        "verified_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Verified At"
+        }
+      },
+      "title": "EvidenceValue",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "schema_version": {"default":"1.0","title":"Schema Version","type":"string"},
+    "platform": {"title":"Platform","type":"string"},
+    "market": {"default":"MX","title":"Market","type":"string"},
+    "seller_name": {"anyOf":[{"type":"string"},{"type":"null"}],"default":null,"title":"Seller Name"},
+    "product_id": {"title":"Product Id","type":"string"},
+    "title": {"title":"Title","type":"string"},
+    "source_url": {"anyOf":[{"type":"string"},{"type":"null"}],"default":null,"title":"Source Url"},
+    "affiliate_url": {"anyOf":[{"type":"string"},{"type":"null"}],"default":null,"title":"Affiliate Url"},
+    "price_amount": {"$ref":"#/$defs/EvidenceValue"},
+    "currency": {"$ref":"#/$defs/EvidenceValue"},
+    "original_price": {"$ref":"#/$defs/EvidenceValue"},
+    "discount_price": {"$ref":"#/$defs/EvidenceValue"},
+    "organic_commission_rate": {"$ref":"#/$defs/EvidenceValue"},
+    "organic_commission_amount": {"$ref":"#/$defs/EvidenceValue"},
+    "shop_ads_commission_rate": {"$ref":"#/$defs/EvidenceValue"},
+    "shop_ads_commission_amount": {"$ref":"#/$defs/EvidenceValue"},
+    "displayed_earnings_amount": {"$ref":"#/$defs/EvidenceValue"},
+    "displayed_earnings_currency": {"$ref":"#/$defs/EvidenceValue"},
+    "free_sample_available": {"$ref":"#/$defs/EvidenceValue"},
+    "sample_status": {"default":"unknown","title":"Sample Status","type":"string"},
+    "sample_requirements": {"items":{"type":"string"},"title":"Sample Requirements","type":"array"},
+    "sales_count": {"$ref":"#/$defs/EvidenceValue"},
+    "orders_count": {"$ref":"#/$defs/EvidenceValue"},
+    "rating": {"$ref":"#/$defs/EvidenceValue"},
+    "review_count": {"$ref":"#/$defs/EvidenceValue"},
+    "stock_status": {"$ref":"#/$defs/EvidenceValue"},
+    "category": {"anyOf":[{"type":"string"},{"type":"null"}],"default":null,"title":"Category"},
+    "trend_signal": {"$ref":"#/$defs/EvidenceValue"},
+    "media_assets": {"items":{"type":"string"},"title":"Media Assets","type":"array"},
+    "verified_benefits": {"items":{"type":"string"},"title":"Verified Benefits","type":"array"},
+    "prohibited_claims": {"items":{"type":"string"},"title":"Prohibited Claims","type":"array"},
+    "commercial_rights_status": {"default":"pending","enum":["pending","approved","rejected"],"title":"Commercial Rights Status","type":"string"},
+    "requires_medical_claims": {"default":false,"title":"Requires Medical Claims","type":"boolean"},
+    "has_known_platform_restrictions": {"default":false,"title":"Has Known Platform Restrictions","type":"boolean"},
+    "has_blocking_platform_restrictions": {"default":false,"title":"Has Blocking Platform Restrictions","type":"boolean"},
+    "critical_evidence_conflict": {"default":false,"title":"Critical Evidence Conflict","type":"boolean"},
+    "invitation_valid_from": {"anyOf":[{"format":"date-time","type":"string"},{"type":"null"}],"default":null,"title":"Invitation Valid From"},
+    "invitation_valid_until": {"anyOf":[{"format":"date-time","type":"string"},{"type":"null"}],"default":null,"title":"Invitation Valid Until"},
+    "captured_at": {"format":"date-time","title":"Captured At","type":"string"},
+    "verified_at": {"anyOf":[{"format":"date-time","type":"string"},{"type":"null"}],"default":null,"title":"Verified At"},
+    "source_provenance": {"items":{"type":"string"},"title":"Source Provenance","type":"array"}
+  },
+  "required": ["platform","product_id","title"],
+  "title": "ProductOfferSnapshot",
+  "type": "object"
+}
