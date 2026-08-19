@@ -19,6 +19,7 @@ class ProductionEconomicsInput(BaseModel):
     costs: ProductionCosts = Field(default_factory=ProductionCosts)
     scenarios: list[EconomicsScenario] = Field(default_factory=list)
     historical_prior: CommercePerformancePriorV1 | None = None
+    prior_context: dict[str, str] = Field(default_factory=dict)
     prior_min_sample_size: int = Field(default=5, ge=2)
     prior_min_confidence: int = Field(default=55, ge=0, le=100)
     base_views: float = Field(default=5000, gt=0)
@@ -58,6 +59,31 @@ class ProductionBenefitReport(BaseModel):
     assumptions: list[str] = Field(default_factory=list)
 
 
+def _effective_prior_context(offer: ProductOfferSnapshot, supplied: dict[str, str]) -> dict[str, str]:
+    context = {
+        "product_id": offer.product_id,
+        "market": offer.market,
+        "content_type": "ugc-commerce",
+    }
+    if offer.category:
+        context["category"] = offer.category
+    if offer.seller_name:
+        context["seller_name"] = offer.seller_name
+    context.update({str(key).strip(): str(value).strip() for key, value in supplied.items() if str(key).strip() and str(value).strip()})
+    return context
+
+
+def _prior_filters_match(prior: CommercePerformancePriorV1, context: dict[str, str]) -> tuple[bool, list[str]]:
+    mismatches: list[str] = []
+    for key, expected in prior.filters.items():
+        actual = context.get(key)
+        if actual is None:
+            mismatches.append(f"{key}=<missing> expected {expected}")
+        elif str(actual) != str(expected):
+            mismatches.append(f"{key}={actual} expected {expected}")
+    return not mismatches, mismatches
+
+
 def _resolve_scenarios(
     offer: ProductOfferSnapshot,
     economics_input: ProductionEconomicsInput,
@@ -78,6 +104,13 @@ def _resolve_scenarios(
     ):
         return [], False, [f"historical prior {prior.prior_id} ignored: insufficient comparable evidence"]
 
+    context = _effective_prior_context(offer, economics_input.prior_context)
+    matches, mismatches = _prior_filters_match(prior, context)
+    if not matches:
+        return [], False, [
+            f"historical prior {prior.prior_id} ignored: filter context mismatch ({'; '.join(mismatches)})"
+        ]
+
     assert prior.ctr_median is not None and prior.cvr_median is not None
     ctr = prior.ctr_median
     cvr = prior.cvr_median
@@ -96,8 +129,9 @@ def _resolve_scenarios(
             cvr=min(1.0, cvr * 1.25),
         ),
     ]
+    filter_note = ", ".join(f"{key}={value}" for key, value in sorted(prior.filters.items())) or "unsegmented"
     return scenarios, True, [
-        f"base CTR/CVR use MIO prior {prior.prior_id} from {prior.sample_size} comparable records at {prior.window_hours}h",
+        f"base CTR/CVR use MIO prior {prior.prior_id} from {prior.sample_size} comparable records at {prior.window_hours}h ({filter_note})",
         "conservative/aggressive prior scenarios scale median CTR/CVR by 0.75x/1.25x; they remain estimates",
     ]
 
