@@ -253,20 +253,31 @@ def factory_order(
         raise typer.BadParameter("economics input must be a JSON object")
 
     trace = None
+    trace_payload: dict = {}
     if creative_trace_file is not None:
-        trace_payload = _read_json(creative_trace_file)
-        if not isinstance(trace_payload, dict):
+        raw_trace = _read_json(creative_trace_file)
+        if not isinstance(raw_trace, dict):
             raise typer.BadParameter("creative trace input must be a JSON object")
-        # A MIO production brief uses `brief_id`; Commerce stores the canonical
-        # cross-system name as `mio_brief_id` inside the immutable order scope.
+        trace_payload = dict(raw_trace)
         if "mio_brief_id" not in trace_payload and trace_payload.get("brief_id"):
-            trace_payload = {**trace_payload, "mio_brief_id": trace_payload["brief_id"]}
+            trace_payload["mio_brief_id"] = trace_payload["brief_id"]
         trace = CommerceCreativeTrace.model_validate(trace_payload)
 
     offer = ProductOfferSnapshot.model_validate(_offer_payload(payload))
     scout_input = ProductScoutInput(**payload["scout"])
     creative = CreativeCapacityInput.model_validate(payload["creative_capacity"])
     intelligence = analyze_product_offer(offer, scout_input, creative)
+
+    prior_context = dict(economics_payload.get("prior_context") or {})
+    prior_context.setdefault("channel_id", channel)
+    prior_context.setdefault("content_type", "ugc-commerce")
+    if offer.category:
+        prior_context.setdefault("category", offer.category)
+    for key in ("hook_family", "story_arc", "visual_style", "cta_style", "pacing", "narrative_id", "series_id", "experiment_id", "variant_id"):
+        value = trace_payload.get(key)
+        if value is not None and str(value).strip():
+            prior_context.setdefault(key, str(value).strip())
+    economics_payload = {**economics_payload, "prior_context": prior_context}
     economics_input = ProductionEconomicsInput.model_validate(economics_payload)
     benefit = analyze_production_cost_benefit(offer, economics_input)
     try:
