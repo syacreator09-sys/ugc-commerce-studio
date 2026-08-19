@@ -215,6 +215,18 @@ def baselines(
     }, indent=2, ensure_ascii=False))
 
 
+@app.command("review-signals")
+def review_signals(input_file: Path = typer.Option(..., "--input", exists=True)) -> None:
+    """Convert commerce-safe review evidence into creative angle signals, never claims."""
+    from .review_evidence import CommerceReviewEvidenceV1, derive_review_creative_signals
+
+    payload = _read_json(input_file)
+    if not isinstance(payload, dict):
+        raise typer.BadParameter("review evidence input must be a JSON object")
+    evidence = CommerceReviewEvidenceV1.model_validate(payload)
+    typer.echo(derive_review_creative_signals(evidence).model_dump_json(indent=2))
+
+
 @app.command("factory-order")
 def factory_order(
     product: Path = typer.Option(..., exists=True),
@@ -222,11 +234,12 @@ def factory_order(
     channel: str = typer.Option(..., "--channel"),
     angle: list[str] = typer.Option(..., "--angle"),
     creative_count: int | None = typer.Option(None, "--creative-count", min=1, max=10),
+    creative_trace_file: Path | None = typer.Option(None, "--creative-trace", exists=True, help="MIO production brief or CommerceCreativeTrace JSON"),
     output: Path = typer.Option(Path("storage/factory-order.json"), "--output"),
 ) -> None:
     """Build an immutable cost/benefit-gated Factory order; never produces media."""
     from .creative_capacity import CreativeCapacityInput
-    from .factory_bridge import build_factory_order
+    from .factory_bridge import CommerceCreativeTrace, build_factory_order
     from .offers import ProductOfferSnapshot
     from .product_intelligence import analyze_product_offer
     from .product_scout_score import ProductScoutInput
@@ -239,10 +252,32 @@ def factory_order(
     if not isinstance(economics_payload, dict):
         raise typer.BadParameter("economics input must be a JSON object")
 
+    trace = None
+    trace_payload: dict = {}
+    if creative_trace_file is not None:
+        raw_trace = _read_json(creative_trace_file)
+        if not isinstance(raw_trace, dict):
+            raise typer.BadParameter("creative trace input must be a JSON object")
+        trace_payload = dict(raw_trace)
+        if "mio_brief_id" not in trace_payload and trace_payload.get("brief_id"):
+            trace_payload["mio_brief_id"] = trace_payload["brief_id"]
+        trace = CommerceCreativeTrace.model_validate(trace_payload)
+
     offer = ProductOfferSnapshot.model_validate(_offer_payload(payload))
     scout_input = ProductScoutInput(**payload["scout"])
     creative = CreativeCapacityInput.model_validate(payload["creative_capacity"])
     intelligence = analyze_product_offer(offer, scout_input, creative)
+
+    prior_context = dict(economics_payload.get("prior_context") or {})
+    prior_context.setdefault("channel_id", channel)
+    prior_context.setdefault("content_type", "ugc-commerce")
+    if offer.category:
+        prior_context.setdefault("category", offer.category)
+    for key in ("hook_family", "story_arc", "visual_style", "cta_style", "pacing", "narrative_id", "series_id", "experiment_id", "variant_id"):
+        value = trace_payload.get(key)
+        if value is not None and str(value).strip():
+            prior_context.setdefault(key, str(value).strip())
+    economics_payload = {**economics_payload, "prior_context": prior_context}
     economics_input = ProductionEconomicsInput.model_validate(economics_payload)
     benefit = analyze_production_cost_benefit(offer, economics_input)
     try:
@@ -253,6 +288,7 @@ def factory_order(
             target_channel=channel,
             angles=angle,
             creative_count=creative_count,
+            creative_trace=trace,
         )
     except ValueError as error:
         raise typer.BadParameter(str(error)) from error
@@ -263,6 +299,11 @@ def factory_order(
         "order_id": order.order_id,
         "scope_id": order.scope_id,
         "status": order.status,
+        "mio_brief_id": order.mio_brief_id,
+        "experiment_id": order.experiment_id,
+        "variant_id": order.variant_id,
+        "historical_prior_id": benefit.historical_prior_id,
+        "historical_prior_applied": benefit.historical_prior_applied,
         "base_net_benefit": benefit.base_net_benefit,
         "base_roi": benefit.base_roi,
         "paid_generation": False,

@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "commerce-performance-prior-v1.schema.json",
+  "title": "CommercePerformancePriorV1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version","prior_id","platform","window_hours","filters","sample_size","ctr_median","cvr_median","ctr_stdev","cvr_stdev","classification","confidence_score","source_refs","causal_claim","generated_at"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "prior_id": {"type": "string", "pattern": "^mio-prior-[0-9a-f]{20}$"},
+    "platform": {"type": "string", "minLength": 1},
+    "window_hours": {"type": "integer", "enum": [24,72,168,720]},
+    "filters": {"type": "object", "additionalProperties": {"type": "string"}},
+    "sample_size": {"type": "integer", "minimum": 1},
+    "ctr_median": {"type": ["number","null"], "minimum": 0, "maximum": 1},
+    "cvr_median": {"type": ["number","null"], "minimum": 0, "maximum": 1},
+    "ctr_stdev": {"type": ["number","null"], "minimum": 0},
+    "cvr_stdev": {"type": ["number","null"], "minimum": 0},
+    "classification": {"enum": ["WIN","PROMISING","INCONCLUSIVE","LOSE"]},
+    "confidence_score": {"type": "integer", "minimum": 0, "maximum": 100},
+    "source_refs": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+    "causal_claim": {"const": false},
+    "generated_at": {"type": "string", "format": "date-time"}
+  }
+}

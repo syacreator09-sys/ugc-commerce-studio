@@ -24,6 +24,20 @@ class CommerceProductionMode(StrEnum):
     ECONOMY = "economy"
 
 
+class CommerceCreativeTrace(BaseModel):
+    mio_brief_id: str | None = None
+    experiment_id: str | None = None
+    variant_id: str | None = None
+    narrative_id: str | None = None
+    series_id: str | None = None
+    hook_family: str | None = None
+    story_arc: str | None = None
+    visual_style: str | None = None
+    cta_style: str | None = None
+    pacing: str | None = None
+    evidence_refs: list[str] = Field(default_factory=list)
+
+
 class CommerceProductionOrderV1(BaseModel):
     schema_version: Literal["1.0"] = "1.0"
     order_id: str
@@ -48,6 +62,18 @@ class CommerceProductionOrderV1(BaseModel):
     prohibited_claims: list[str] = Field(default_factory=list)
     media_assets: list[str] = Field(default_factory=list)
     provenance: list[str] = Field(default_factory=list)
+
+    mio_brief_id: str | None = None
+    experiment_id: str | None = None
+    variant_id: str | None = None
+    narrative_id: str | None = None
+    series_id: str | None = None
+    hook_family: str | None = None
+    story_arc: str | None = None
+    visual_style: str | None = None
+    cta_style: str | None = None
+    pacing: str | None = None
+    evidence_refs: list[str] = Field(default_factory=list)
 
     confidence_score: int = Field(ge=0, le=100)
     ugc_fit_raw_score: int = Field(ge=0, le=90)
@@ -79,7 +105,10 @@ class FactoryProductionReceiptV1(BaseModel):
 
 def _scope_payload(order: CommerceProductionOrderV1 | dict) -> dict:
     if isinstance(order, CommerceProductionOrderV1):
-        payload = order.model_dump(mode="json")
+        # exclude_unset preserves verification for v1 orders created before the
+        # optional MIO trace fields existed, while new orders include fields
+        # that were explicitly scoped by build_factory_order().
+        payload = order.model_dump(mode="json", exclude_unset=True)
     else:
         payload = dict(order)
     for key in ("order_id", "scope_id", "status", "created_at", "approved_by", "approved_at"):
@@ -116,6 +145,7 @@ def build_factory_order(
     angles: list[str],
     creative_count: int | None = None,
     production_mode: CommerceProductionMode = CommerceProductionMode.UGC_HIGGSFIELD,
+    creative_trace: CommerceCreativeTrace | None = None,
 ) -> CommerceProductionOrderV1:
     if intelligence.product_id != offer.product_id:
         raise ValueError("intelligence report does not match offer product_id")
@@ -133,6 +163,7 @@ def build_factory_order(
     if len(distinct_angles) < creative_count:
         raise ValueError("not enough distinct creative angles for requested creative_count")
 
+    trace = creative_trace or CommerceCreativeTrace()
     payload = {
         "schema_version": "1.0",
         "product_id": offer.product_id,
@@ -149,6 +180,7 @@ def build_factory_order(
         "prohibited_claims": list(offer.prohibited_claims),
         "media_assets": list(offer.media_assets),
         "provenance": list(dict.fromkeys(offer.source_provenance)),
+        **trace.model_dump(mode="json"),
         "confidence_score": intelligence.data_quality.score,
         "ugc_fit_raw_score": intelligence.ugc_fit_raw_score,
         "ugc_fit_normalized_score": intelligence.ugc_fit_normalized_score,
