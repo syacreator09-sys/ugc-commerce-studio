@@ -60,6 +60,7 @@ def test_compatible_mio_prior_fills_base_scenario():
         ProductionEconomicsInput(
             costs=ProductionCosts(currency="MXN", generation_cost_mxn=200),
             historical_prior=_prior(),
+            prior_context={"hook_family": "problem-solution"},
         ),
     )
     assert result.historical_prior_applied is True
@@ -70,12 +71,40 @@ def test_compatible_mio_prior_fills_base_scenario():
     assert result.historical_prior_source_refs == ["mio:metrics-72h"]
 
 
+def test_segmented_prior_is_ignored_when_creative_context_does_not_match():
+    result = analyze_production_cost_benefit(
+        _offer(),
+        ProductionEconomicsInput(
+            costs=ProductionCosts(currency="MXN"),
+            historical_prior=_prior(),
+            prior_context={"hook_family": "curiosity"},
+        ),
+    )
+    assert result.historical_prior_applied is False
+    assert result.base_scenario is None
+    assert result.recommendation == "NEEDS_DATA"
+    assert any("filter context mismatch" in note for note in result.assumptions)
+
+
+def test_segmented_prior_is_ignored_when_required_context_is_missing():
+    result = analyze_production_cost_benefit(
+        _offer(),
+        ProductionEconomicsInput(
+            costs=ProductionCosts(currency="MXN"),
+            historical_prior=_prior(),
+        ),
+    )
+    assert result.historical_prior_applied is False
+    assert any("hook_family=<missing>" in note for note in result.assumptions)
+
+
 def test_inconclusive_prior_is_not_silently_used():
     result = analyze_production_cost_benefit(
         _offer(),
         ProductionEconomicsInput(
             costs=ProductionCosts(currency="MXN"),
             historical_prior=_prior(classification="INCONCLUSIVE", sample_size=3, confidence=24),
+            prior_context={"hook_family": "problem-solution"},
         ),
     )
     assert result.historical_prior_applied is False
