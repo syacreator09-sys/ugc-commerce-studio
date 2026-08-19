@@ -105,7 +105,10 @@ class FactoryProductionReceiptV1(BaseModel):
 
 def _scope_payload(order: CommerceProductionOrderV1 | dict) -> dict:
     if isinstance(order, CommerceProductionOrderV1):
-        payload = order.model_dump(mode="json")
+        # exclude_unset preserves verification for v1 orders created before the
+        # optional MIO trace fields existed, while new orders include fields
+        # that were explicitly scoped by build_factory_order().
+        payload = order.model_dump(mode="json", exclude_unset=True)
     else:
         payload = dict(order)
     for key in ("order_id", "scope_id", "status", "created_at", "approved_by", "approved_at"):
