@@ -1,6 +1,6 @@
 ---
 name: cano-ugc-commerce
-version: 0.5.0
+version: 0.5.1
 description: Busca y analiza oportunidades UGC Commerce, decide muestras/producción y genera drafts de productos propios o afiliados con Higgsfield después de evidencia, economics, scoring y aprobación.
 triggers:
   - busca productos para tiktok shop
@@ -34,6 +34,7 @@ Skill para Claude Code, Codex y agentes compatibles. Convierte descubrimiento/ev
 - **Draft-only:** nunca publicar, activar anuncios ni escalar presupuesto automáticamente.
 - **Test small:** probar pocas variantes, medir y multiplicar el ángulo ganador.
 - **No fake testimonial:** no decir `lo probé`, `me funcionó` o equivalente sin evidencia real autorizada.
+- **Core hooks first:** antes de inventar aperturas nuevas, consultar `prompts/core-hook-bank.md` y adaptar una de las estructuras principales cuando encaje con el producto y la evidencia.
 
 ## Routing de agentes
 
@@ -141,6 +142,19 @@ Cuando existan datos reales de publicaciones:
 - `ugc_unboxing`
 - `product_showcase`
 - `ugc_virtual_try_on`
+
+## Banco principal de hooks
+
+Fuente canónica: `prompts/core-hook-bank.md`.
+
+Usar estas familias como primera opción para UGC de producto y performance:
+- curiosidad / open loop;
+- transformación / consecuencia;
+- advertencia / loss aversion;
+- precompra / intención comercial;
+- descubrimiento / deseo.
+
+Para A/B testing, mantener cuerpo/demo/CTA constantes y cambiar principalmente el hook de 0–3 s.
 
 ## Reglas del guion
 
