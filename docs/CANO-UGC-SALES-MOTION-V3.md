@@ -2,10 +2,12 @@
 
 Canonical post-production pattern for a **UGC → proof/reveal → commercial CTA** edit.
 
-Status: approved visual direction.
+Status: **CANONICAL / APPROVED — V3.3**
 Owner: Cano Digital.
 Runtime: HTML/SVG-like motion rendered with Node + Sharp, assembled with FFmpeg.
 Do not publish automatically.
+
+> Canonical rule: preserve this motion language as the reference for future Cano UGC sales edits. Do not redesign or replace it unless Alfonso explicitly asks for a new visual system.
 
 ## Why this version exists
 
@@ -32,6 +34,8 @@ Sequence:
 - Preserve face, product and burned captions.
 - No fabricated performance metrics.
 - Motion should explain the narration, not decorate it.
+- Prefer one visual metaphor per spoken idea.
+- Keep overlays short, contextual and subordinate to the UGC performance.
 
 ## V3.3 motion map
 
@@ -94,6 +98,18 @@ For the final outro, set `CANO_OUTRO_BASE` to the cleaned final UGC frame before
 ## Reuse rule
 
 Do not copy this layout mechanically to every channel. Reuse the **motion grammar**:
+
 spoken concept → one visual metaphor → short UI state → clear CTA.
 
 For Cano Digital, this premium tech treatment is native. Other channels need channel-specific art direction.
+
+## Locked reference
+
+The approved reference version is **CANO_UGC_SALES_V3_3**.
+
+When building future Cano UGC edits:
+- start from this motion grammar;
+- preserve the same hierarchy and restraint;
+- change only the metaphor, copy and CTA required by the new script;
+- never add decorative dashboards that do not match the spoken idea;
+- never overwrite this canonical reference without explicit approval.
