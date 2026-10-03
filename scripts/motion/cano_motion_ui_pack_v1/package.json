@@ -1,0 +1,13 @@
+{
+  "name": "cano-motion-ui-pack-v1",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Deterministic Cano Digital UGC/talking-head motion UI renderer",
+  "scripts": {
+    "render": "node render_variations.js",
+    "check": "node --check render_variations.js"
+  },
+  "dependencies": {
+    "sharp": "^0.34.0"
+  }
+}
