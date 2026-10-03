@@ -69,7 +69,9 @@
     "max_duration": "3m",
     "lyrics": true,
     "vocals": true,
-    "synthid": true
+    "image_to_music": true,
+    "synthid": true,
+    "stems_export": "UNCONFIRMED_IN_OFFICIAL_SOURCES_REVIEWED"
   },
   "internal_validation": {
     "influencer_v2": "PASS",
@@ -81,6 +83,54 @@
     "max_5_reference_images",
     "native_4k_veo_generation",
     "lyria_stems",
-    "gemini_5h_reset_and_weekly_limits"
-  ]
+    "Gemini claim: Veo Quality 1080p native",
+    "Gemini claim: Characters supported by all Veo 3.1 modes",
+    "Gemini claim: character/object/background replacement explicitly official in Omni",
+    "Gemini claim: Agent cannot visually self-evaluate outputs",
+    "Gemini claim: Tools server-side workflow architecture and conditional looping limits"
+  ],
+  "ingestions": [
+    {
+      "source": "Gemini direct technical audit",
+      "date": "2026-10-03",
+      "status": "AUDITED_WITH_OFFICIAL_SOURCES"
+    }
+  ],
+  "avatar": {
+    "handle": "@me",
+    "biometric_voice_verification": true,
+    "facial_angle_capture": true,
+    "unavailable_regions": [
+      "EEA",
+      "UK",
+      "Switzerland"
+    ],
+    "tools_sharing": false,
+    "public_project_link_sharing": false,
+    "evidence": "GOOGLE_FLOW_HELP"
+  },
+  "agent": {
+    "confirm_before_generate": [
+      "Always",
+      "Never"
+    ],
+    "can_generate_media_without_confirmation_when_never": true,
+    "persistent_project_instructions": true,
+    "reference_image_instructions": true,
+    "default_image_generation_settings": true,
+    "default_video_generation_settings": true,
+    "evidence": "GOOGLE_FLOW_HELP"
+  },
+  "disputed_claims": {
+    "veo_3_1_quality_ingredients": {
+      "gemini_audit": "SUPPORTED_8S",
+      "official_flow_help": "UNSUPPORTED",
+      "canonical": "UNSUPPORTED"
+    },
+    "max_5_reference_images": {
+      "gemini_audit": "OBSERVED_BUFFER_LIMIT",
+      "official_flow_help_reviewed": "NOT_CONFIRMED",
+      "canonical": "UNCONFIRMED"
+    }
+  }
 }
