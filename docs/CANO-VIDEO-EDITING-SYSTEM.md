@@ -1,3 +1,19 @@
+# CANONICAL HOME MOVED
+
+The canonical Cano video-editing system now lives in:
+
+`syacreator09-sys/multimodal-content-engine`
+
+Primary entrypoints:
+- `templates/video-edit/TEMPLATE_REGISTRY_V1.json`
+- `docs/video-engine/CANO_CHATGPT_WEB_EDITING_RUNTIME_V1.md`
+- `templates/video-edit/CANO_UGC_SALES_V3_3.json`
+- `templates/video-edit/cano-motion-ui-pack-v1/`
+
+This file/repository copy is retained only as a migration backup. Do not treat it as the canonical editing source and do not evolve the render system here.
+
+---
+
 # CANO VIDEO EDITING SYSTEM — INDEX
 
 Status: canonical reference index.
