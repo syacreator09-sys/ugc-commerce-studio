@@ -94,6 +94,11 @@
       "source": "Gemini direct technical audit",
       "date": "2026-10-03",
       "status": "AUDITED_WITH_OFFICIAL_SOURCES"
+    },
+    {
+      "source": "Gemini Google Flow Master product audit",
+      "date": "2026-10-03",
+      "status": "PARTIALLY_CANONICALIZED_OFFICIAL_ONLY"
     }
   ],
   "avatar": {
@@ -131,6 +136,44 @@
       "gemini_audit": "OBSERVED_BUFFER_LIMIT",
       "official_flow_help_reviewed": "NOT_CONFIRMED",
       "canonical": "UNCONFIRMED"
+    }
+  },
+  "flow_platform": {
+    "agent": {
+      "planning": true,
+      "media_generation": true,
+      "direct_media_edit": true,
+      "batch_variations": true,
+      "asset_organization": true,
+      "autonomous_visual_qa": "UNVERIFIED",
+      "scene_builder_control": "UNVERIFIED"
+    },
+    "tools": {
+      "natural_language_creation": true,
+      "code_and_ui_generation": true,
+      "edit": true,
+      "remix": true,
+      "pin": true,
+      "share": true,
+      "multistep_chaining": "UNVERIFIED",
+      "branching": "UNVERIFIED",
+      "loops": "UNVERIFIED",
+      "visual_scoring": "UNVERIFIED",
+      "explicit_model_routing": "UNVERIFIED"
+    },
+    "scene_builder": {
+      "arrange": true,
+      "reorder": true,
+      "trim": true,
+      "preview": true,
+      "download": true,
+      "advanced_audio": "UNVERIFIED",
+      "layers": "NOT_DOCUMENTED",
+      "subtitles": "NOT_DOCUMENTED"
+    },
+    "external_api": {
+      "flow_ui_api": "NOT_VERIFIED_AS_PUBLIC_API",
+      "vertex_and_model_apis": "SEPARATE_FROM_FLOW_UI"
     }
   }
 }
