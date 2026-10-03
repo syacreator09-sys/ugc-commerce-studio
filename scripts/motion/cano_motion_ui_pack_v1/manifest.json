@@ -1,0 +1,46 @@
+{
+  "pack": "CANO_MOTION_UI_PACK_V1",
+  "status": "CANONICAL_EXPERIMENTAL_FAMILY",
+  "protected_reference": "CANO_UGC_SALES_V3_3",
+  "source_reference": "ugc-job-4-estilos-pro-v003.mp4",
+  "render_contract": {
+    "width": 1080,
+    "height": 1920,
+    "overlay_fps": 12,
+    "delivery_fps": 24,
+    "duration_seconds": 19.55,
+    "video_codec": "h264",
+    "audio": "copy from approved source/master"
+  },
+  "visual_language": {
+    "gold": "#FFBE37",
+    "blue": "#55B8FF",
+    "cyan": "#54F0D1",
+    "white": "#F7FAFF",
+    "muted": "#A8BAC9",
+    "grammar": "spoken concept -> matching visual metaphor -> short UI state -> reveal -> concrete CTA"
+  },
+  "families": [
+    {"id":"A_SOCIAL_CONVERSATION","role":"chats, tasks, calendar, social-agent interactions","output":"CANO_A_SOCIAL_CONVERSATION_FULL.mp4"},
+    {"id":"B_COMMAND_CENTER","role":"SaaS/dashboard/automation/agent control plane","output":"CANO_B_COMMAND_CENTER_FULL.mp4"},
+    {"id":"C_KINETIC_PHONE","role":"retention-first kinetic typography + phone UI","output":"CANO_C_KINETIC_PHONE_FULL.mp4"},
+    {"id":"D_FLOATING_APP_WORLD","role":"floating app ecosystem / parallax-style cards","output":"CANO_D_FLOATING_APP_WORLD_FULL_FIXED_FINAL.mp4","note":"Use face-safe corrected layout only."},
+    {"id":"E_PROCESS_TRANSFORMATION","role":"chaos -> AI organizes -> pipeline -> outcome","output":"CANO_E_PROCESS_TRANSFORMATION_FULL.mp4"}
+  ],
+  "reference_render_sha256": {
+    "CANO_UGC_SALES_V3_3_FINAL.mp4": "48f37a0a31877ca7a6a54f16002bd4091116304829811b39456c3802ec858462",
+    "CANO_A_SOCIAL_CONVERSATION_FULL.mp4": "689de4e52590419cff92efc97e1f8f83bbe65c43e4eb28299e7a1f04559fb94d",
+    "CANO_B_COMMAND_CENTER_FULL.mp4": "6ed8c0c7d92e9a1b3fff5c958041f6e5ab2e436a33a24373db11aa0aa0a7264f",
+    "CANO_C_KINETIC_PHONE_FULL.mp4": "177a190f634ca3ca486b725a81c2e8efeb9127d4d92e7a8989eb51760ed78d16",
+    "CANO_D_FLOATING_APP_WORLD_FULL_FIXED_FINAL.mp4": "cf344322613f3bf7401aca36b9d01ec4fef7f9311964790eceb68c1fe2c8a680",
+    "CANO_E_PROCESS_TRANSFORMATION_FULL.mp4": "27345dc000c103969b9cc56d501ae7c82f093c7573d1b5e27b07f967f36dd068"
+  },
+  "rules": [
+    "Do not alter or overwrite CANO_UGC_SALES_V3_3.",
+    "Do not invent performance metrics.",
+    "Keep face, mouth, eyes, product and burned captions readable.",
+    "Use D face-safe correction, not the earlier overlapping version.",
+    "Source/customer media and final MP4s are not committed to Git; store them in media storage and verify with SHA-256.",
+    "Code is source of truth for reproducibility."
+  ]
+}
