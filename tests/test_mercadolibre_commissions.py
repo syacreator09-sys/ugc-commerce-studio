@@ -22,6 +22,7 @@ def offer(**overrides):
     args = {
         "item_id": "MLM5768786652",
         "price_mxn": verified(800),
+        "currency": verified("MXN"),
         "eligible": verified(True),
         "captured_at": NOW,
         "evidence_ref": REF,
@@ -143,3 +144,11 @@ def test_summary_counts_offers_and_missing_data_without_guesswork():
     assert report["offers_with_displayed_verified_amount"] == 1
     assert report["offers_with_calculated_estimate"] == 1
     assert report["offers_without_payout"] == 1
+
+def test_mxn_must_be_proven_before_reporting_a_per_sale_amount():
+    no_currency = offer(displayed_payout_mxn=verified(120), currency=EvidenceValue.unknown())
+    result = evaluate_commission(no_currency, now=NOW)
+    assert result["basis"] == "CURRENCY_UNVERIFIED_OR_NON_MXN"
+    assert result["offered_per_sale_mxn"] is None
+    usd = offer(displayed_payout_mxn=verified(120), currency=verified("USD"))
+    assert evaluate_commission(usd, now=NOW)["offered_per_sale_mxn"] is None
