@@ -34,7 +34,7 @@ def _evidence(record: Any) -> EvidenceValue:
     source = source if isinstance(source, str) and source.startswith("https://") else None
     status = record.get("status", "UNKNOWN")
     value = record.get("value")
-    if value is None or status not in {s.value for s in EvidenceStatus}:
+    if value is None or status == "UNKNOWN" or status not in {s.value for s in EvidenceStatus}:
         return EvidenceValue.unknown(source=source)
     observed = record.get("observed_at")
     verified_at = None
