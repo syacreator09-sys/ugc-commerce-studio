@@ -22,6 +22,7 @@ class AffiliateCommissionOffer(BaseModel):
     item_id: str
     placement: Literal["ml_affiliates", "youtube_shopping", "facebook_affiliates"] = "ml_affiliates"
     price_mxn: EvidenceValue = Field(default_factory=EvidenceValue.unknown)
+    currency: EvidenceValue = Field(default_factory=EvidenceValue.unknown)
     eligible: EvidenceValue = Field(default_factory=EvidenceValue.unknown)
     category_rate_pct: EvidenceValue = Field(default_factory=EvidenceValue.unknown)
     seller_extra_rate_pct: EvidenceValue = Field(default_factory=EvidenceValue.unknown)
@@ -87,6 +88,9 @@ def evaluate_commission(
         "evidence_ref": offer.evidence_ref,
         "production_decision": "NEEDS_DATA",
     }
+    if not offer.currency.is_verified or offer.currency.value != "MXN":
+        result["basis"] = "CURRENCY_UNVERIFIED_OR_NON_MXN"
+        return result
     if offer.eligible.is_verified and offer.eligible.value is False:
         result["basis"] = "NOT_ELIGIBLE"
         return result
