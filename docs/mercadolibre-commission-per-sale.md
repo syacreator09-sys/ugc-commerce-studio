@@ -17,7 +17,7 @@ La comisión estándar por categoría y la Comisión EXTRA del vendedor son conc
 
 1. ID de publicación exacto MLM..., no el ID de catálogo, y canal aplicable.
 2. Elegibilidad del producto para la cuenta y canal actual.
-3. Precio actual en MXN de la misma publicación.
+3. Precio actual y moneda MXN verificada de la misma publicación.
 4. Monto ofrecido por venta, si el panel lo muestra literalmente.
 5. Porcentaje total, comisión base y Comisión EXTRA del vendedor, solo si se muestran.
 6. Campaña, fecha de observación y vigencia.
@@ -36,6 +36,7 @@ los de la captura del panel. No publicar datos de sesión en Git.
           "item_id": "MLM1234567890",
           "placement": "ml_affiliates",
           "price_mxn": {"value": 800, "status": "VERIFIED", "source": "private-affiliate-capture:001"},
+          "currency": {"value": "MXN", "status": "VERIFIED", "source": "private-affiliate-capture:001"},
           "eligible": {"value": true, "status": "VERIFIED", "source": "private-affiliate-capture:001"},
           "category_rate_pct": {"value": 8, "status": "VERIFIED", "source": "private-affiliate-capture:001"},
           "seller_extra_rate_pct": {"value": 7, "status": "VERIFIED", "source": "private-affiliate-capture:001"},
