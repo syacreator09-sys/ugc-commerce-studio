@@ -15,7 +15,7 @@ from typing import Any, Mapping
 from .offers import EvidenceStatus, EvidenceValue, ProductOfferSnapshot
 
 _ITEM_ID = re.compile(r"^MLM\d{1,20}$")
-_OFFER_STATES = {"available", "unavailable", "not_requested"}
+_OFFER_STATES = {"available", "empty", "unavailable", "not_requested"}
 
 
 def _verified_field(record: Any) -> bool:
@@ -162,7 +162,8 @@ def summarize_candidate_batch(payload: Mapping[str, Any]) -> dict[str, Any]:
     return {
         "site_id": payload.get("site_id"),
         "catalogs_returned": len(entries),
-        "catalogues_queried_for_offers": statuses["available"] + statuses["unavailable"],
+        "catalogues_queried_for_offers": statuses["available"] + statuses["empty"] + statuses["unavailable"],
+        "catalogues_with_empty_offer_response": statuses["empty"],
         "catalogues_with_offers": statuses["available"],
         "catalogues_without_offer_lookup": statuses["not_requested"],
         "offer_lookup_failures": dict(failure_codes),

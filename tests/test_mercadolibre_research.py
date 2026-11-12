@@ -113,3 +113,42 @@ def test_batch_summary_does_not_confuse_catalogue_count_with_verified_offers():
     assert report["offers_with_verified_seller_id"] == 1
     assert report["affiliate_commission_verified"] == 0
     assert report["production_approval"] == "NEEDS_DATA"
+
+
+def test_empty_catalogue_offer_lookup_counts_as_attempt_not_as_available_offer():
+    empty = {
+        "id": "MLM999000111",
+        "kind": "catalog",
+        "offers_status": "empty",
+        "offers": [],
+    }
+    report = summarize_candidate_batch({"site_id": "MLM", "candidates": [empty]})
+    assert report["catalogs_returned"] == 1
+    assert report["catalogues_queried_for_offers"] == 1
+    assert report["catalogues_with_offers"] == 0
+    assert report["catalogues_with_empty_offer_response"] == 1
+    assert report["catalogues_without_offer_lookup"] == 0
+    assert report["offer_lookup_failures"] == {}
+    assert report["offers_returned"] == 0
+    assert report["affiliate_commission_verified"] == 0
+    assert report["production_approval"] == "NEEDS_DATA"
+
+
+def test_mixed_offer_states_count_attempts_separately_from_missing_lookup():
+    available = catalog_with_offer()
+    empty = {"id": "MLM111222333", "kind": "catalog", "offers_status": "empty", "offers": []}
+    blocked = {
+        "id": "MLM444555666", "kind": "catalog", "offers_status": "unavailable",
+        "offers_error": {"code": "not_found", "http_status": 404}, "offers": [],
+    }
+    untouched = {"id": "MLM777888999", "kind": "catalog", "offers_status": "not_requested"}
+    report = summarize_candidate_batch({
+        "site_id": "MLM", "candidates": [available, empty, blocked, untouched]
+    })
+    assert report["catalogues_queried_for_offers"] == 3
+    assert report["catalogues_with_offers"] == 1
+    assert report["catalogues_with_empty_offer_response"] == 1
+    assert report["catalogues_without_offer_lookup"] == 1
+    assert report["offer_lookup_failures"] == {"not_found": 1}
+    assert report["offers_returned"] == 1
+    assert report["production_approval"] == "NEEDS_DATA"
