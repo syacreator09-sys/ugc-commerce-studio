@@ -34,6 +34,16 @@ Una URL de API no es un enlace de compra afiliado y no debe utilizarse como CTA.
 5. Confirmar la elegibilidad y comisión de afiliados en el panel autorizado. Nunca estimarla como dato real.
 6. Probar la herramienta MCP desde Composio, documentar resultados sin tokens y marcar las decisiones que requieren datos.
 
+## Actualización de integración — 12 de noviembre de 2026
+
+Las tareas de publicación e integración del conector, descritas arriba como pendientes al 4 de noviembre, **ya se completaron**: `mercadolibre-research` PR #1 y `ugc-commerce-studio` PR #7 fueron fusionados a `main`. El CI de UGC Commerce posterior a la fusión terminó correctamente.
+
+**Semántica de cobertura:** `available` significa que la muestra devolvió ofertas; `empty` significa consulta ejecutada sin ofertas en esa muestra; `unavailable` significa consulta fallida o bloqueada (incluidos 403/404); `not_requested` significa que no se hizo la consulta. `empty` y `unavailable` cuentan como intentos; ninguno prueba ausencia absoluta de vendedores. El resultado `empty` se contabiliza aparte sin inventar precios, vendedores ni disponibilidad.
+
+**Pruebas reales recientes:** un catálogo de lámpara LED devolvió 404 de ofertas, mientras que el catálogo Supcozy `MLM73110037` sí devolvió tres ofertas MXN, con vendedores identificados. Son situaciones observadas en la API oficial y pueden cambiar. Ni el catálogo ni las ofertas conceden derechos sobre imágenes o generan links y comisiones de afiliado.
+
+**Pendiente comercial:** la cuenta autorizada en la Central de Afiliados debe aportar elegibilidad, porcentaje/pago vigente, link rastreable y campaña del mismo `item_id` (publicación, no catálogo). Luego se verifican stock, precio actualizado, derechos y QA antes de cualquier publicación. No es válido calcular utilidad neta a partir del precio de venta del vendedor sin comisión real y costos atribuibles.
+
 ## Pruebas
 
 Ejecutar: pytest -q tests/test_mercadolibre_research.py
