@@ -56,6 +56,10 @@ class ProductOfferSnapshot(BaseModel):
     title: str
     source_url: str | None = None
     affiliate_url: str | None = None
+    # Marketplace listing proof is separate from shared catalogue visibility.
+    listing_status: EvidenceValue = Field(default_factory=EvidenceValue.unknown)
+    affiliate_eligibility: EvidenceValue = Field(default_factory=EvidenceValue.unknown)
+    affiliate_link_verified: EvidenceValue = Field(default_factory=EvidenceValue.unknown)
 
     price_amount: EvidenceValue = Field(default_factory=EvidenceValue.unknown)
     currency: EvidenceValue = Field(default_factory=EvidenceValue.unknown)
