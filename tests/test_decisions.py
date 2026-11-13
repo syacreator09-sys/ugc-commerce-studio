@@ -95,3 +95,46 @@ def test_blocking_platform_restriction_is_hard_reject():
     result = decide(o)
     assert result.production_decision == ProductionDecision.RECHAZADO
     assert any("platform" in reason.lower() for reason in result.hard_gates)
+
+
+def test_meli_active_catalogue_or_price_alone_cannot_approve_a_reel():
+    # Even strong verified economics is insufficient without item-level proof.
+    meli = complete_offer(platform="mercadolibre", product_id="MLM2442708391")
+    result = decide(meli)
+    assert result.production_decision == ProductionDecision.EN_ESPERA
+    assert any("seller listing" in reason for reason in result.reasons)
+
+
+def test_meli_paused_listing_is_rejected_even_with_positive_commission():
+    meli = complete_offer(
+        platform="mercadolibre", product_id="MLM5476402580",
+        listing_status=EvidenceValue.verified("paused"),
+        affiliate_eligibility=EvidenceValue.verified(True),
+        affiliate_url="https://www.mercadolibre.com.mx/afiliados/example",
+        affiliate_link_verified=EvidenceValue.verified(True),
+    )
+    result = decide(meli)
+    assert result.production_decision == ProductionDecision.RECHAZADO
+    assert result.sample_decision == SampleDecision.NO_SOLICITAR
+
+
+def test_meli_active_nonaffiliate_listing_is_rejected():
+    meli = complete_offer(
+        platform="mercadolibre", product_id="MLM2442708391",
+        listing_status=EvidenceValue.verified("active"),
+        affiliate_eligibility=EvidenceValue.verified(False),
+    )
+    result = decide(meli)
+    assert result.production_decision == ProductionDecision.RECHAZADO
+
+
+def test_meli_all_commercial_gates_verified_can_proceed_to_existing_ugc_qa():
+    meli = complete_offer(
+        platform="mercadolibre", product_id="MLM2442708391",
+        listing_status=EvidenceValue.verified("active"),
+        affiliate_eligibility=EvidenceValue.verified(True),
+        affiliate_url="https://www.mercadolibre.com.mx/afiliados/verified-example",
+        affiliate_link_verified=EvidenceValue.verified(True),
+    )
+    result = decide(meli)
+    assert result.production_decision == ProductionDecision.PROCEDE
