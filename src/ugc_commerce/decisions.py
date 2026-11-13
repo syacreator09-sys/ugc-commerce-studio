@@ -75,6 +75,44 @@ def decide_product(
             recommended_initial_creatives=0,
         )
 
+    # Mercado Libre affiliate UGC is not a catalogue-only workflow. A paused
+    # seller listing, unknown affiliate eligibility, or unverified tracked link
+    # can never be promoted to PROCEDE by a high UGC fit score.
+    if offer.platform.lower() in {"mercadolibre", "mercado_libre"}:
+        listing = offer.listing_status
+        eligible = offer.affiliate_eligibility
+        linked = offer.affiliate_link_verified
+        if listing.is_verified and str(listing.value).lower() in {"paused", "closed", "inactive", "under_review"}:
+            return DecisionReport(
+                sample_decision=SampleDecision.NO_SOLICITAR,
+                production_decision=ProductionDecision.RECHAZADO,
+                reasons=["Mercado Libre seller listing is not active"],
+                recommended_initial_creatives=0,
+            )
+        if eligible.is_verified and eligible.value is False:
+            return DecisionReport(
+                sample_decision=SampleDecision.NO_SOLICITAR,
+                production_decision=ProductionDecision.RECHAZADO,
+                reasons=["Mercado Libre affiliate listing is not eligible"],
+                recommended_initial_creatives=0,
+            )
+        missing = []
+        if not listing.is_verified or str(listing.value).lower() != "active":
+            missing.append("active seller listing evidence")
+        if not offer.stock_status.is_verified or str(offer.stock_status.value).lower() not in {"in_stock", "available"}:
+            missing.append("current seller listing stock")
+        if not eligible.is_verified or eligible.value is not True:
+            missing.append("affiliate eligibility in authorized panel")
+        if not offer.affiliate_url or not linked.is_verified or linked.value is not True:
+            missing.append("verified tracked affiliate link")
+        if missing:
+            return DecisionReport(
+                sample_decision=SampleDecision.NEEDS_DATA,
+                production_decision=ProductionDecision.EN_ESPERA,
+                reasons=["Mercado Libre requires: " + ", ".join(missing)],
+                recommended_initial_creatives=0,
+            )
+
     if free_sample_verified and free_sample_value is False:
         sample_decision = SampleDecision.NO_SOLICITAR
         reasons.append("free sample is explicitly unavailable")
