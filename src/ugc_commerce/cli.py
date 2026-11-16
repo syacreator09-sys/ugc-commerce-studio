@@ -91,6 +91,42 @@ def generate(
     typer.echo(json.dumps([str(path) for path in files], indent=2))
 
 
+@app.command("kie-doctor")
+def kie_doctor() -> None:
+    """Check Kie.ai adapter status. Never makes a network call."""
+    from .kie import KieClient
+
+    typer.echo(json.dumps(KieClient().doctor(), indent=2))
+
+
+@app.command("kie-estimate")
+def kie_estimate(plan_file: Path = typer.Option(..., "--plan", exists=True)) -> None:
+    """Estimate a plan's real Kie.ai cost from the verified catalog. Never makes a network call."""
+    from .kie import estimate_cost_usd
+
+    plan_model = read_model(plan_file, UGCPlan)
+    typer.echo(json.dumps(estimate_cost_usd(plan_model), indent=2))
+
+
+@app.command("kie-generate")
+def kie_generate(
+    plan_file: Path = typer.Option(..., "--plan", exists=True),
+    approval_file: Path = typer.Option(..., "--approval", exists=True),
+    budget_usd: float = typer.Option(..., "--budget-usd", min=0, help="Owner-authorized spend cap for this job."),
+    output: Path = typer.Option(Path("storage/scenes")),
+) -> None:
+    """Generate via Kie.ai. Fails closed: blocked unless KIE_ENABLED and
+    KIE_LIVE_EXECUTION are both explicitly set, and unless the estimated
+    cost is within --budget-usd. This command never flips those flags
+    itself — the owner sets them only after approving a specific job."""
+    from .kie import KieClient
+
+    plan_model = read_model(plan_file, UGCPlan)
+    approval_model = read_model(approval_file, Approval)
+    files = KieClient().execute_plan(plan_model, approval_model, output, budget_usd=budget_usd)
+    typer.echo(json.dumps([str(path) for path in files], indent=2))
+
+
 @app.command()
 def draft(
     plan_file: Path = typer.Option(..., "--plan", exists=True),
