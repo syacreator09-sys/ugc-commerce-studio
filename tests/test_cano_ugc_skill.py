@@ -21,6 +21,7 @@ def test_skill_reuses_existing_scripts_not_new_engine():
     for path in [
         "scripts/export_ugc_ads_drafts.py",
         "scripts/build_six_scene_plan.py",
+        "scripts/build_one_scene_pilot.py",
         "scripts/generate_ad.py",
         "scripts/transcribe_correct.py",
         "scripts/build_captions_srt.py",
