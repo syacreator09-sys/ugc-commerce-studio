@@ -109,15 +109,35 @@ class HiggsfieldClient:
         for scene in plan.scenes:
             target = output_dir / f"scene-{scene.index}.mp4"
             evidence = output_dir / f"scene-{scene.index}.json"
+            receipt = output_dir / f"scene-{scene.index}.submission.json"
             if target.exists() and evidence.exists():
+                if target.stat().st_size <= 0:
+                    raise HiggsfieldError(f"Empty downloaded scene file: {target}")
                 results.append(target)
                 continue
+            # The CLI --wait command may have submitted a paid remote job even when
+            # the local process dies. Never auto-resubmit an incomplete scene.
+            if receipt.exists() or target.exists() or evidence.exists():
+                raise HiggsfieldError(
+                    f"UNRESOLVED_SCENE_SUBMISSION scene {scene.index}: "
+                    "inspect provider job history and local receipt before any retry"
+                )
             command = self._command_for_scene(plan, scene, product_id=product_id)
+            # Exclusive creation is intentional: if another worker already
+            # submitted this scene, it must never be billed twice.
+            with receipt.open("x", encoding="utf-8") as handle:
+                json.dump({"status": "SUBMISSION_UNRESOLVED",
+                           "scope_id": plan.scope_id, "scene_index": scene.index}, handle)
             payload = self._run_json_with_retry(command)
             url = self._extract_result_url(payload)
             self._download(url, target)
             evidence.write_text(
                 json.dumps({"command": command, "response": payload, "scope_id": plan.scope_id}, indent=2),
+                encoding="utf-8",
+            )
+            receipt.write_text(
+                json.dumps({"status": "DOWNLOADED", "scope_id": plan.scope_id,
+                            "scene_index": scene.index}, indent=2),
                 encoding="utf-8",
             )
             results.append(target)
@@ -224,6 +244,15 @@ class HiggsfieldClient:
         )
         return any(marker in text for marker in markers)
 
+    @staticmethod
+    def _ambiguous_cli_error(message: str) -> bool:
+        # These errors can occur *after* the remote provider accepted a task.
+        # Retry only after reconciling remote status; never automate a second bill.
+        markers = ("502", "504", "timeout", "timed out", "gateway",
+                   "connection reset", "connection aborted", "econnreset",
+                   "broken pipe", "network error")
+        return any(marker in message.lower() for marker in markers)
+
     def _run_json_with_retry(self, command: list[str]) -> Any:
         last_error = "unknown error"
         for attempt in range(1, self.max_retries + 1):
@@ -232,8 +261,16 @@ class HiggsfieldClient:
                 try:
                     return json.loads(result.stdout)
                 except json.JSONDecodeError as error:
-                    raise HiggsfieldError(f"Higgsfield CLI returned invalid JSON: {error}") from error
+                    raise HiggsfieldError(
+                        "AMBIGUOUS_REMOTE_SUBMISSION: CLI returned invalid JSON; "
+                        "reconcile provider job status before retry"
+                    ) from error
             last_error = self._error_text(result)
+            if result.returncode == 124 or self._ambiguous_cli_error(last_error):
+                raise HiggsfieldError(
+                    "AMBIGUOUS_REMOTE_SUBMISSION: remote task may already exist; "
+                    f"do not resubmit until reconciled: {last_error[:300]}"
+                )
             if self._non_retryable_cli_error(last_error):
                 break
             if attempt < self.max_retries:
