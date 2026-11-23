@@ -44,40 +44,62 @@
       "scenes": [
         {
           "start": 0,
-          "end": 3,
-          "visual": "Plano cenital de mesa desordenada recreada con elementos propios",
-          "voice": "¿Dónde dejaste eso que acabas de usar?",
-          "overlay": "¿Otra vez buscando?"
+          "end": 5,
+          "visual": "Hook: escritorio con objetos dispersos en casa, sin logos ajenos",
+          "voice": "¿Tu escritorio se ve así al comenzar el día?",
+          "overlay": "¿Todo fuera de lugar?"
         },
         {
-          "start": 3,
-          "end": 8,
-          "visual": "Transición a un organizador conceptual; no exagerar características",
-          "voice": "Imagina un espacio donde cada cosa tenga su lugar.",
-          "overlay": "Menos caos visual"
+          "start": 5,
+          "end": 10,
+          "visual": "Problema: persona buscando una pluma entre objetos propios",
+          "voice": "A veces lo que falta no es espacio, sino una forma de organizarlo.",
+          "overlay": "El problema"
         },
         {
-          "start": 8,
+          "start": 10,
           "end": 15,
-          "visual": "Tres tomas de organización con props propios",
-          "voice": "Una propuesta simple para mostrar tu rutina con claridad.",
-          "overlay": "Idea de organización"
+          "visual": "Producto: reveal de prototipo conceptual MODULA",
+          "voice": "Esta es MODULA, nuestra idea de un organizador sencillo.",
+          "overlay": "MODULA · Concepto"
         },
         {
           "start": 15,
-          "end": 22,
-          "visual": "Toma de resultado con indicación de producto ficticio",
-          "voice": "Así presentamos el concepto MODULA.",
-          "overlay": "Demo conceptual"
+          "end": 20,
+          "visual": "Demostración: manos acomodan útiles en prop fabricado para demo",
+          "voice": "Así se vería una demostración con elementos reales.",
+          "overlay": "Cómo se presenta"
         },
         {
-          "start": 22,
-          "end": 26,
-          "visual": "Cierre gráfico con llamada a la acción",
-          "voice": "Conoce la idea y decide qué versión te gusta.",
-          "overlay": "Explora MODULA"
+          "start": 20,
+          "end": 25,
+          "visual": "Beneficio: plano alternado de composición antes/después simulada",
+          "voice": "La propuesta es una mesa visualmente más ordenada.",
+          "overlay": "Resultado recreado"
+        },
+        {
+          "start": 25,
+          "end": 30,
+          "visual": "CTA: empaque conceptual y disclaimer de producto ficticio",
+          "voice": "Conoce este concepto y descubre cómo crearíamos tu anuncio.",
+          "overlay": "Demo UGC · MODULA"
         }
-      ]
+      ],
+      "production_preset": "santmun_parity_30s",
+      "scope": {
+        "premium_generation_approved": false,
+        "max_spend_usd": null,
+        "provider": "higgsfield",
+        "provider_plan_status": "PENDING_VALIDATION",
+        "authorized_avatar_id": null,
+        "source_rights_verified": false
+      },
+      "meta": {
+        "objective": "OUTCOME_TRAFFIC",
+        "conversion_destination": "DEMO_LANDING_PENDING",
+        "creative_status": "DRAFT_NOT_PUBLISHED",
+        "ai_disclosure_review": "REQUIRED"
+      }
     },
     {
       "id": "demo-b-beauty",
@@ -122,40 +144,62 @@
       "scenes": [
         {
           "start": 0,
-          "end": 4,
-          "visual": "Reflejos sobre envase ficticio sin etiquetas reales",
-          "voice": "Hay rituales que empiezan con un pequeño momento.",
-          "overlay": "Tu momento"
+          "end": 5,
+          "visual": "Hook: luz de ventana, frasco neutro sin aplicación a piel",
+          "voice": "¿Cómo haces que un ritual cotidiano se vea especial?",
+          "overlay": "Un momento para ti"
         },
         {
-          "start": 4,
+          "start": 5,
           "end": 10,
-          "visual": "Escena editorial de lavabo y luz de ventana",
-          "voice": "Un espacio tranquilo, texturas limpias y una idea sencilla.",
-          "overlay": "Ritual visual"
+          "visual": "Problema: lavabo con objetos dispersos, sin afirmaciones cosméticas",
+          "voice": "A veces una historia visual necesita un momento de calma.",
+          "overlay": "El ambiente"
         },
         {
           "start": 10,
-          "end": 17,
-          "visual": "Toma lenta de empaque conceptual sin aplicación a piel",
-          "voice": "NUBA es nuestro concepto para contar esa historia.",
-          "overlay": "NUBA / Concepto ficticio"
+          "end": 15,
+          "visual": "Producto: presentación editorial de un frasco conceptual etiquetado NUBA",
+          "voice": "NUBA es nuestra bruma conceptual para esta demostración.",
+          "overlay": "NUBA · Concepto"
         },
         {
-          "start": 17,
-          "end": 23,
-          "visual": "Plano detalle de prop y ambiente",
-          "voice": "Diseñado aquí como una demostración creativa.",
-          "overlay": "Demo creativa"
+          "start": 15,
+          "end": 20,
+          "visual": "Demostración: manos muestran el envase sin aplicar contenido",
+          "voice": "Mira cómo mostramos el envase, la luz y sus detalles.",
+          "overlay": "Tomas de producto"
         },
         {
-          "start": 23,
-          "end": 27,
-          "visual": "Cierre tipográfico",
-          "voice": "Conoce la propuesta visual.",
-          "overlay": "Descubre NUBA"
+          "start": 20,
+          "end": 25,
+          "visual": "Beneficio: reflejos, composición, textura visual sin claims de piel",
+          "voice": "La intención es comunicar una estética cuidada, sin prometer resultados.",
+          "overlay": "Dirección de arte"
+        },
+        {
+          "start": 25,
+          "end": 30,
+          "visual": "CTA: plano limpio de producto y mensaje de demostración",
+          "voice": "Conoce esta propuesta creativa para marcas de belleza.",
+          "overlay": "Demo UGC · NUBA"
         }
-      ]
+      ],
+      "production_preset": "santmun_parity_30s",
+      "scope": {
+        "premium_generation_approved": false,
+        "max_spend_usd": null,
+        "provider": "higgsfield",
+        "provider_plan_status": "PENDING_VALIDATION",
+        "authorized_avatar_id": null,
+        "source_rights_verified": false
+      },
+      "meta": {
+        "objective": "OUTCOME_TRAFFIC",
+        "conversion_destination": "DEMO_LANDING_PENDING",
+        "creative_status": "DRAFT_NOT_PUBLISHED",
+        "ai_disclosure_review": "REQUIRED"
+      }
     },
     {
       "id": "demo-c-performance",
@@ -200,40 +244,62 @@
       "scenes": [
         {
           "start": 0,
-          "end": 3,
-          "visual": "Split-screen del rincón de lectura con cambios de iluminación artificial",
-          "voice": "¿Qué le falta a este rincón?",
-          "overlay": "Un detalle cambia todo"
+          "end": 5,
+          "visual": "Hook A: rincón de lectura simulado, luz ambiente tenue",
+          "voice": "¿Qué le falta a este rincón para verse diferente?",
+          "overlay": "¿Qué cambiarías?"
         },
         {
-          "start": 3,
-          "end": 9,
-          "visual": "Aparece lámpara conceptual con luz dirigida",
-          "voice": "A veces la historia empieza con la iluminación.",
-          "overlay": "Concepto LUMO"
+          "start": 5,
+          "end": 10,
+          "visual": "Problema: rincón recreado con iluminación de fondo",
+          "voice": "No siempre hace falta cambiar todos los objetos.",
+          "overlay": "Mismo espacio"
         },
         {
-          "start": 9,
-          "end": 16,
-          "visual": "Tres encuadres cortos de estética de lectura",
-          "voice": "Mira cómo cambia la atmósfera en pantalla.",
-          "overlay": "Dos ambientes"
+          "start": 10,
+          "end": 15,
+          "visual": "Producto: aparición de lámpara conceptual LUMO",
+          "voice": "LUMO es nuestra propuesta visual de iluminación de lectura.",
+          "overlay": "LUMO · Concepto"
         },
         {
-          "start": 16,
-          "end": 22,
-          "visual": "Comparativa visual claramente recreada",
-          "voice": "Este es un ejercicio visual, no una prueba técnica.",
-          "overlay": "Simulación creativa"
+          "start": 15,
+          "end": 20,
+          "visual": "Demostración: cambio controlado de luz en set recreado",
+          "voice": "Mira estos dos ambientes filmados con el mismo encuadre.",
+          "overlay": "Dos versiones"
         },
         {
-          "start": 22,
-          "end": 27,
-          "visual": "CTA y cierre",
-          "voice": "Explora el concepto LUMO.",
-          "overlay": "Conoce LUMO"
+          "start": 20,
+          "end": 25,
+          "visual": "Beneficio: split screen de iluminación, rotulado como simulación",
+          "voice": "Aquí comparamos la atmósfera, no el rendimiento del producto.",
+          "overlay": "Comparación recreada"
+        },
+        {
+          "start": 25,
+          "end": 30,
+          "visual": "CTA: tres titulares alternativos y destino demo",
+          "voice": "Explora el concepto y elige tu hook favorito.",
+          "overlay": "Tres hooks · LUMO"
         }
-      ]
+      ],
+      "production_preset": "santmun_parity_30s",
+      "scope": {
+        "premium_generation_approved": false,
+        "max_spend_usd": null,
+        "provider": "higgsfield",
+        "provider_plan_status": "PENDING_VALIDATION",
+        "authorized_avatar_id": null,
+        "source_rights_verified": false
+      },
+      "meta": {
+        "objective": "OUTCOME_TRAFFIC",
+        "conversion_destination": "DEMO_LANDING_PENDING",
+        "creative_status": "DRAFT_NOT_PUBLISHED",
+        "ai_disclosure_review": "REQUIRED"
+      }
     }
   ]
 }
