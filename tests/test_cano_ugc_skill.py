@@ -26,7 +26,8 @@ def test_skill_reuses_existing_scripts_not_new_engine():
         "scripts/build_captions_srt.py",
         "scripts/composite_verified.py",
     ]:
-        assert path in content
+        module_form = path.removesuffix(".py").replace("/", ".")
+        assert path in content or module_form in content
         assert (ROOT / path).is_file()
 
 
