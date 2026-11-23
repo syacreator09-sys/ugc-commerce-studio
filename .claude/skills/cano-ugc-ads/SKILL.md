@@ -26,11 +26,12 @@ Este skill **orquesta** el repositorio existente; no es otro motor ni otro schem
 2. **Creatividad:** 10 hooks candidatos, 5 preseleccionados, 3 A/B; 6 escenas × 5 s como preset de 30 s *sólo si la capacidad del modelo lo permite*. Mantén cuerpo/CTA constantes entre variantes. Usa guiones aprobados y captions en español LATAM; natural_text, spoken_text y caption_text son independientes.
 3. **Planificación sin costo:** usa `scripts/export_ugc_ads_drafts.py` para briefs ficticios. Si existe un **producto real, derechos confirmados y revisión humana del guion**, convertirlo al esquema `UGCPlan` con `scripts/build_six_scene_plan.py`, sujeto a hash de revisión; el script ficticio exportado no cumple este gate.
 4. **Aprobación:** muestra el plan inmutable, media permitida, perfil/voz, duración, costo, riesgos, `scope_id`; exige autorización explícita y coincidente. No generar ni autorizar créditos desde el skill.
-5. **Ejecución aprobada:** `scripts/generate_ad.py --plan ... --approval ... --out ...` invoca el cliente Higgsfield existente. Primero audita la recuperación de jobs inciertos e idempotencia; si la petición remota pudo cobrarse y su estado es desconocido, detén el reintento y escala al operador. Nunca lances las seis escenas a ciegas.
-6. **QA por escena:** revisar diálogos, labios, manos, geometría, créditos, licencias, continuidad y exactitud de claims; regenerar escenas individuales solo bajo presupuesto aprobado.
-7. **Transcripción y subtítulos:** usa `scripts/transcribe_correct.py`, después `python -m scripts.build_captions_srt` con los JSON temporizados reales. Revisa captions contra audio final.
-8. **Composición:** usa `scripts/composite_verified.py` con `--require-captions`, clips con audio y video reales, hard cuts y FFprobe. Revisión humana adicional es obligatoria.
-9. **Entrega:** sólo reportar `master.mp4`, dimensiones, duración, hash, QA y estado después de comprobar los archivos físicos. Mantén publicación y ads desactivados.
+5. **Piloto primero:** deriva un `scope_id` exclusivo de una escena con `scripts/build_one_scene_pilot.py`; muestra costo y solicita una **aprobación nueva y explícita**. No puede heredar la del plan completo.
+6. **Ejecución aprobada:** `scripts/generate_ad.py --plan ... --approval ... --out ...` invoca el cliente Higgsfield existente. Primero audita la recuperación de jobs inciertos e idempotencia; si la petición remota pudo cobrarse y su estado es desconocido, detén el reintento y escala al operador. Nunca lances las seis escenas a ciegas.
+7. **QA por escena:** revisar diálogos, labios, manos, geometría, créditos, licencias, continuidad y exactitud de claims; regenerar escenas individuales solo bajo presupuesto aprobado.
+8. **Transcripción y subtítulos:** usa `scripts/transcribe_correct.py`, después `python -m scripts.build_captions_srt` con los JSON temporizados reales. Revisa captions contra audio final.
+9. **Composición:** usa `scripts/composite_verified.py` con `--require-captions`, clips con audio y video reales, hard cuts y FFprobe. Revisión humana adicional es obligatoria.
+10. **Entrega:** sólo reportar `master.mp4`, dimensiones, duración, hash, QA y estado después de comprobar los archivos físicos. Mantén publicación y ads desactivados.
 
 ## Prohibiciones (no negociables)
 - Sin llamada de generación premium, publicidad, pago, upload a Meta ni publicación automática.
