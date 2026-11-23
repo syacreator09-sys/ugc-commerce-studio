@@ -34,9 +34,9 @@
         ]
       },
       "hooks": [
-        "¿Tu escritorio se ve así al comenzar el día?",
-        "Tres movimientos para una mesa más clara.",
-        "La diferencia entre buscar y encontrar empieza aquí."
+        "¿Dónde quedó mi pluma? Si tu mesa se ve así, mira.",
+        "Antes de elegir un organizador, mira esta idea.",
+        "Mira qué cambia al acomodar estas tres cosas."
       ],
       "cta": "Descubre el concepto MODULA",
       "copy": "¿Mucho ruido visual en tu escritorio? Explora MODULA, una propuesta conceptual de organización. Demo ficticia; especificaciones y disponibilidad no verificadas.",
@@ -45,44 +45,44 @@
         {
           "start": 0,
           "end": 5,
-          "visual": "Hook: escritorio con objetos dispersos en casa, sin logos ajenos",
-          "voice": "¿Tu escritorio se ve así al comenzar el día?",
-          "overlay": "¿Todo fuera de lugar?"
+          "visual": "Plano móvil del escritorio: mano busca una pluma negra entre cuaderno azul, lápices amarillos y papeles; composición vertical con continuidad",
+          "voice": "¿Dónde quedó mi pluma? Si tu mesa se ve así, mira.",
+          "overlay": "¿Dónde quedó mi pluma?"
         },
         {
           "start": 5,
           "end": 10,
-          "visual": "Problema: persona buscando una pluma entre objetos propios",
-          "voice": "A veces lo que falta no es espacio, sino una forma de organizarlo.",
-          "overlay": "El problema"
+          "visual": "Plano cenital del mismo escritorio; organizador MODULA ficticio aparece mediante movimiento manual, sin inventar características",
+          "voice": "Esta es una idea visual para darle otro lugar a todo.",
+          "overlay": "Idea visual · MODULA"
         },
         {
           "start": 10,
           "end": 15,
-          "visual": "Producto: reveal de prototipo conceptual MODULA",
-          "voice": "Esta es MODULA, nuestra idea de un organizador sencillo.",
-          "overlay": "MODULA · Concepto"
+          "visual": "Dos lápices amarillos se colocan a mano sobre el organizador según referencia visual aprobada; cuaderno desplazado, luz constante",
+          "voice": "Primero, dejamos libre el centro y acomodamos los lápices.",
+          "overlay": "Acomodamos los lápices"
         },
         {
           "start": 15,
           "end": 20,
-          "visual": "Demostración: manos acomodan útiles en prop fabricado para demo",
-          "voice": "Así se vería una demostración con elementos reales.",
-          "overlay": "Cómo se presenta"
+          "visual": "Primer plano de la misma pluma negra encontrada y colocada a mano junto al prop; sin transporte mágico",
+          "voice": "Y ahora sí, aquí está la pluma que estábamos buscando.",
+          "overlay": "Aquí está la pluma"
         },
         {
           "start": 20,
           "end": 25,
-          "visual": "Beneficio: plano alternado de composición antes/después simulada",
-          "voice": "La propuesta es una mesa visualmente más ordenada.",
-          "overlay": "Resultado recreado"
+          "visual": "Misma mesa, mismos objetos y luz; encuadre final más limpio por intervención de las manos, comparación editorial recreada",
+          "voice": "Es la misma mesa, pero con otra composición para la toma.",
+          "overlay": "Misma mesa · otra composición"
         },
         {
           "start": 25,
           "end": 30,
-          "visual": "CTA: empaque conceptual y disclaimer de producto ficticio",
-          "voice": "Conoce este concepto y descubre cómo crearíamos tu anuncio.",
-          "overlay": "Demo UGC · MODULA"
+          "visual": "Plano héroe del organizador ficticio MODULA con etiqueta de demo agregada en post; sin venta, precio o inventario",
+          "voice": "Esto es MODULA, una demostración creativa. Mira el concepto.",
+          "overlay": "MODULA · Demo conceptual"
         }
       ],
       "production_preset": "santmun_parity_30s",
@@ -134,9 +134,9 @@
         ]
       },
       "hooks": [
-        "Un minuto para cambiar el ritmo de tu rutina.",
-        "¿Y si tu ritual se sintiera más simple?",
-        "El detalle que hace que una rutina se vea especial."
+        "¿Y si tu rutina empezara con un segundo de calma?",
+        "Así se ve un ritual cuando quitas el ruido.",
+        "No necesitas mil objetos para contar una historia."
       ],
       "cta": "Conoce el concepto NUBA",
       "copy": "NUBA es una marca ficticia creada para mostrar dirección de arte UGC beauty, sin testimonios ni resultados clínicos.",
@@ -145,44 +145,44 @@
         {
           "start": 0,
           "end": 5,
-          "visual": "Hook: luz de ventana, frasco neutro sin aplicación a piel",
-          "voice": "¿Cómo haces que un ritual cotidiano se vea especial?",
-          "overlay": "Un momento para ti"
+          "visual": "Reflejo suave en espejo de tocador de piedra crema, frasco ficticio NUBA cerrado, luz lateral; presentadora natural, no aplicación a piel",
+          "voice": "¿Y si tu rutina empezara con un segundo de calma?",
+          "overlay": "Un segundo de calma"
         },
         {
           "start": 5,
           "end": 10,
-          "visual": "Problema: lavabo con objetos dispersos, sin afirmaciones cosméticas",
-          "voice": "A veces una historia visual necesita un momento de calma.",
-          "overlay": "El ambiente"
+          "visual": "Plano cenital de tocador; mano aparta props y coloca frasco cerrado según referencia visual, mismo set",
+          "voice": "A veces el detalle está en cómo preparamos el espacio.",
+          "overlay": "El detalle está en la escena"
         },
         {
           "start": 10,
           "end": 15,
-          "visual": "Producto: presentación editorial de un frasco conceptual etiquetado NUBA",
-          "voice": "NUBA es nuestra bruma conceptual para esta demostración.",
-          "overlay": "NUBA · Concepto"
+          "visual": "Macro editorial del frasco cerrado NUBA ficticio y sus reflejos; no mostrar función, vapor ni fórmula",
+          "voice": "Mira la luz, el envase y todo lo que lo rodea.",
+          "overlay": "Luz · envase · detalles"
         },
         {
           "start": 15,
           "end": 20,
-          "visual": "Demostración: manos muestran el envase sin aplicar contenido",
-          "voice": "Mira cómo mostramos el envase, la luz y sus detalles.",
-          "overlay": "Tomas de producto"
+          "visual": "Presentadora adulta ficticia mirando cámara con naturalidad; frasco cerrado permanece sobre bandeja",
+          "voice": "Este concepto se llama NUBA, y es una historia visual.",
+          "overlay": "NUBA · Concepto visual"
         },
         {
           "start": 20,
           "end": 25,
-          "visual": "Beneficio: reflejos, composición, textura visual sin claims de piel",
-          "voice": "La intención es comunicar una estética cuidada, sin prometer resultados.",
-          "overlay": "Dirección de arte"
+          "visual": "Mismo tocador, objetos reposicionados físicamente, luz y vestuario idénticos; transición por corte directo",
+          "voice": "Mismo espacio, distinta composición. Eso es lo que estamos mostrando.",
+          "overlay": "Mismo espacio · otra composición"
         },
         {
           "start": 25,
           "end": 30,
-          "visual": "CTA: plano limpio de producto y mensaje de demostración",
-          "voice": "Conoce esta propuesta creativa para marcas de belleza.",
-          "overlay": "Demo UGC · NUBA"
+          "visual": "Plano estático de frasco ficticio en bandeja; disclosure de demo y marca ficticia agregado en post",
+          "voice": "NUBA es una demo creativa. Conoce la propuesta visual.",
+          "overlay": "NUBA · Demo creativa"
         }
       ],
       "production_preset": "santmun_parity_30s",
@@ -234,9 +234,9 @@
         ]
       },
       "hooks": [
-        "La escena cambia con un solo detalle.",
         "¿Qué le falta a este rincón?",
-        "Antes de cambiar tus muebles, mira la luz."
+        "Antes de mover tus muebles, mira la iluminación.",
+        "La misma esquina. Dos maneras de contarla."
       ],
       "cta": "Explora el concepto LUMO",
       "copy": "Un rincón, dos atmósferas. LUMO es un concepto de demostración para ilustrar creativos con hooks A/B, sin afirmaciones técnicas verificadas.",
@@ -245,44 +245,44 @@
         {
           "start": 0,
           "end": 5,
-          "visual": "Hook A: rincón de lectura simulado, luz ambiente tenue",
-          "voice": "¿Qué le falta a este rincón para verse diferente?",
-          "overlay": "¿Qué cambiarías?"
+          "visual": "Mismo rincón de lectura, silla beige, libro azul sobre mesa de madera; mano señala un espacio de composición",
+          "voice": "¿Qué le falta a este rincón? Mira dónde pusimos la luz.",
+          "overlay": "¿Qué le falta a este rincón?"
         },
         {
           "start": 5,
           "end": 10,
-          "visual": "Problema: rincón recreado con iluminación de fondo",
-          "voice": "No siempre hace falta cambiar todos los objetos.",
-          "overlay": "Mismo espacio"
+          "visual": "Plano abierto estable con los mismos muebles y libro; sin cambios de cámara ni props nuevos",
+          "voice": "El sillón, el libro, la mesa. Todo está en su lugar.",
+          "overlay": "Mismo rincón · mismos objetos"
         },
         {
           "start": 10,
           "end": 15,
-          "visual": "Producto: aparición de lámpara conceptual LUMO",
-          "voice": "LUMO es nuestra propuesta visual de iluminación de lectura.",
-          "overlay": "LUMO · Concepto"
+          "visual": "Mano sitúa físicamente lámpara conceptual LUMO según su referencia aprobada junto al libro, sin funciones imaginadas",
+          "voice": "Ahora colocamos LUMO aquí, como parte de esta escena.",
+          "overlay": "Colocamos LUMO aquí"
         },
         {
           "start": 15,
           "end": 20,
-          "visual": "Demostración: cambio controlado de luz en set recreado",
-          "voice": "Mira estos dos ambientes filmados con el mismo encuadre.",
-          "overlay": "Dos versiones"
+          "visual": "Plano lateral de iluminación ambiental recreada para dirección de arte; etiqueta de simulación creativa en post",
+          "voice": "La atmósfera cambia en esta visualización creativa que preparamos.",
+          "overlay": "Visualización creativa"
         },
         {
           "start": 20,
           "end": 25,
-          "visual": "Beneficio: split screen de iluminación, rotulado como simulación",
-          "voice": "Aquí comparamos la atmósfera, no el rendimiento del producto.",
-          "overlay": "Comparación recreada"
+          "visual": "Comparación de dos tratamientos visuales del mismo set con cámara fija, montada en post, sin claims de lúmenes",
+          "voice": "Es el mismo lugar, con una propuesta visual diferente.",
+          "overlay": "Mismo lugar · otro tratamiento"
         },
         {
           "start": 25,
           "end": 30,
-          "visual": "CTA: tres titulares alternativos y destino demo",
-          "voice": "Explora el concepto y elige tu hook favorito.",
-          "overlay": "Tres hooks · LUMO"
+          "visual": "Plano héroe de lámpara ficticia LUMO, libro idéntico y disclosure conceptual en post, sin CTA de compra",
+          "voice": "Esto es LUMO, un concepto de anuncio. Explora la idea.",
+          "overlay": "LUMO · Demo conceptual"
         }
       ],
       "production_preset": "santmun_parity_30s",
