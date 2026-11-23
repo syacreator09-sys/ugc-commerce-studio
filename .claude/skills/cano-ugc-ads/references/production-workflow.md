@@ -42,6 +42,18 @@ python scripts/build_six_scene_plan.py \
 
 Este comando **sólo** crea un plan con `scope_id` y no genera un `Approval`; `status=APPROVED_FOR_PRODUCTION`, `rights_status=APPROVED` y `source_kind=VERIFIED_PRODUCT` son verificaciones de entrada para la fase de producción, no evidencia autónoma de derechos. En 2026 el nombre del modelo y duraciones deben comprobarse en la CLI real.
 
+## Piloto seguro: una escena, alcance separado
+El plan de seis escenas **no se ejecuta** para el piloto. Crea otro `UGCPlan` de una escena con su propio `scope_id`, sin autorización heredada:
+
+```bash
+python scripts/build_one_scene_pilot.py \
+  --plan storage/plans/approved-script-plan.json \
+  --scene-index 1 \
+  --output storage/plans/pilot-scene-1-plan.json
+```
+
+Enseña el nuevo `scope_id`, revisa presupuesto y obtiene autorización expresa para ese piloto. Sólo cuando su QA sea aceptado se plantea el plan completo de seis escenas y su segunda aprobación independiente. Nunca alterar manualmente el `scope_id`.
+
 ## Punto de aprobación premium
 Consulta `config/policies.json`. Después de preflight, comparar costo estimado real del proveedor, escenarios de reintento y cuotas con un presupuesto autorizado. Obtener aprobación específica del usuario **después** de generar el scope. La presencia de `Approval` sin autorización auténtica del humano NO se considera permiso.
 
