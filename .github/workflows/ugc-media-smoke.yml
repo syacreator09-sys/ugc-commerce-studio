@@ -1,0 +1,28 @@
+name: UGC six-scene media smoke
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install FFmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - name: Install project deps
+        run: python -m pip install -e ".[dev]"
+      - name: Python regression tests
+        run: python -m pytest -q tests/test_build_captions_srt.py tests/test_build_six_scene_plan.py tests/test_cano_ugc_skill.py
+      - name: Synthetic 6x5s smoke (no premium provider)
+        run: python -m scripts.smoke_six_scene_media
