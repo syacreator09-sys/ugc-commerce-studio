@@ -1,0 +1,239 @@
+{
+  "schema_version": "1.0",
+  "campaigns": [
+    {
+      "id": "demo-a-ecommerce",
+      "type": "ecommerce",
+      "brand": "PORTFOLIO DEMO A",
+      "product": {
+        "name": "Organizador de escritorio MODULA",
+        "fictional": true
+      },
+      "rights": {
+        "status": "PENDING_SOURCE_APPROVAL",
+        "source": "Producto y diseño ficticios; assets finales por producir o licenciar.",
+        "music": "No asignada; pendiente de licencia",
+        "talent": "Avatar solo con consentimiento"
+      },
+      "claims": {
+        "facts_verified": [],
+        "facts_unknown": [
+          "material",
+          "dimensiones",
+          "precio",
+          "stock",
+          "resistencia"
+        ],
+        "claims_allowed": [
+          "Escena conceptual de organización"
+        ],
+        "claims_forbidden": [
+          "garantizado",
+          "certificado",
+          "100% sostenible"
+        ]
+      },
+      "hooks": [
+        "¿Tu escritorio se ve así al comenzar el día?",
+        "Tres movimientos para una mesa más clara.",
+        "La diferencia entre buscar y encontrar empieza aquí."
+      ],
+      "cta": "Descubre el concepto MODULA",
+      "copy": "¿Mucho ruido visual en tu escritorio? Explora MODULA, una propuesta conceptual de organización. Demo ficticia; especificaciones y disponibilidad no verificadas.",
+      "upwork": "E-commerce UGC concept: hook-to-benefit storyboard, captions, ad copy and modular A/B hooks. Fictional brand; video production and final rights clearance pending.",
+      "scenes": [
+        {
+          "start": 0,
+          "end": 3,
+          "visual": "Plano cenital de mesa desordenada recreada con elementos propios",
+          "voice": "¿Dónde dejaste eso que acabas de usar?",
+          "overlay": "¿Otra vez buscando?"
+        },
+        {
+          "start": 3,
+          "end": 8,
+          "visual": "Transición a un organizador conceptual; no exagerar características",
+          "voice": "Imagina un espacio donde cada cosa tenga su lugar.",
+          "overlay": "Menos caos visual"
+        },
+        {
+          "start": 8,
+          "end": 15,
+          "visual": "Tres tomas de organización con props propios",
+          "voice": "Una propuesta simple para mostrar tu rutina con claridad.",
+          "overlay": "Idea de organización"
+        },
+        {
+          "start": 15,
+          "end": 22,
+          "visual": "Toma de resultado con indicación de producto ficticio",
+          "voice": "Así presentamos el concepto MODULA.",
+          "overlay": "Demo conceptual"
+        },
+        {
+          "start": 22,
+          "end": 26,
+          "visual": "Cierre gráfico con llamada a la acción",
+          "voice": "Conoce la idea y decide qué versión te gusta.",
+          "overlay": "Explora MODULA"
+        }
+      ]
+    },
+    {
+      "id": "demo-b-beauty",
+      "type": "beauty",
+      "brand": "PORTFOLIO DEMO B",
+      "product": {
+        "name": "Bruma cosmética NUBA",
+        "fictional": true
+      },
+      "rights": {
+        "status": "PENDING_SOURCE_APPROVAL",
+        "source": "Marca, empaque y fórmula ficticios; no usar logos de terceros",
+        "music": "Pendiente de licencia",
+        "talent": "Sin testimonios reales ni semejanza de persona sin permiso"
+      },
+      "claims": {
+        "facts_verified": [],
+        "facts_unknown": [
+          "ingredientes",
+          "eficacia",
+          "seguridad",
+          "registro",
+          "precio"
+        ],
+        "claims_allowed": [
+          "Concepto visual de ritual de cuidado"
+        ],
+        "claims_forbidden": [
+          "elimina arrugas",
+          "cura",
+          "resultados clínicos"
+        ]
+      },
+      "hooks": [
+        "Un minuto para cambiar el ritmo de tu rutina.",
+        "¿Y si tu ritual se sintiera más simple?",
+        "El detalle que hace que una rutina se vea especial."
+      ],
+      "cta": "Conoce el concepto NUBA",
+      "copy": "NUBA es una marca ficticia creada para mostrar dirección de arte UGC beauty, sin testimonios ni resultados clínicos.",
+      "upwork": "Beauty/lifestyle UGC preproduction case with premium art direction, honest concept copy, storyboard and timed draft captions. No clinical claims or fake testimonials.",
+      "scenes": [
+        {
+          "start": 0,
+          "end": 4,
+          "visual": "Reflejos sobre envase ficticio sin etiquetas reales",
+          "voice": "Hay rituales que empiezan con un pequeño momento.",
+          "overlay": "Tu momento"
+        },
+        {
+          "start": 4,
+          "end": 10,
+          "visual": "Escena editorial de lavabo y luz de ventana",
+          "voice": "Un espacio tranquilo, texturas limpias y una idea sencilla.",
+          "overlay": "Ritual visual"
+        },
+        {
+          "start": 10,
+          "end": 17,
+          "visual": "Toma lenta de empaque conceptual sin aplicación a piel",
+          "voice": "NUBA es nuestro concepto para contar esa historia.",
+          "overlay": "NUBA / Concepto ficticio"
+        },
+        {
+          "start": 17,
+          "end": 23,
+          "visual": "Plano detalle de prop y ambiente",
+          "voice": "Diseñado aquí como una demostración creativa.",
+          "overlay": "Demo creativa"
+        },
+        {
+          "start": 23,
+          "end": 27,
+          "visual": "Cierre tipográfico",
+          "voice": "Conoce la propuesta visual.",
+          "overlay": "Descubre NUBA"
+        }
+      ]
+    },
+    {
+      "id": "demo-c-performance",
+      "type": "performance",
+      "brand": "PORTFOLIO DEMO C",
+      "product": {
+        "name": "Lámpara de lectura LUMO",
+        "fictional": true
+      },
+      "rights": {
+        "status": "PENDING_SOURCE_APPROVAL",
+        "source": "Identidad y lámpara ilustrativas, sin SKU comercial",
+        "music": "Pendiente",
+        "talent": "No se usa persona identificable"
+      },
+      "claims": {
+        "facts_verified": [],
+        "facts_unknown": [
+          "lúmenes",
+          "autonomía",
+          "potencia",
+          "precio",
+          "compatibilidad"
+        ],
+        "claims_allowed": [
+          "Concepto de iluminación para una escena de lectura"
+        ],
+        "claims_forbidden": [
+          "ahorra 70%",
+          "la mejor del mercado",
+          "certificada"
+        ]
+      },
+      "hooks": [
+        "La escena cambia con un solo detalle.",
+        "¿Qué le falta a este rincón?",
+        "Antes de cambiar tus muebles, mira la luz."
+      ],
+      "cta": "Explora el concepto LUMO",
+      "copy": "Un rincón, dos atmósferas. LUMO es un concepto de demostración para ilustrar creativos con hooks A/B, sin afirmaciones técnicas verificadas.",
+      "upwork": "Performance ad concept with three independent opening hooks, reproducible 9:16 scene plan, test matrix and disclosure-first draft. Not a measured winner.",
+      "scenes": [
+        {
+          "start": 0,
+          "end": 3,
+          "visual": "Split-screen del rincón de lectura con cambios de iluminación artificial",
+          "voice": "¿Qué le falta a este rincón?",
+          "overlay": "Un detalle cambia todo"
+        },
+        {
+          "start": 3,
+          "end": 9,
+          "visual": "Aparece lámpara conceptual con luz dirigida",
+          "voice": "A veces la historia empieza con la iluminación.",
+          "overlay": "Concepto LUMO"
+        },
+        {
+          "start": 9,
+          "end": 16,
+          "visual": "Tres encuadres cortos de estética de lectura",
+          "voice": "Mira cómo cambia la atmósfera en pantalla.",
+          "overlay": "Dos ambientes"
+        },
+        {
+          "start": 16,
+          "end": 22,
+          "visual": "Comparativa visual claramente recreada",
+          "voice": "Este es un ejercicio visual, no una prueba técnica.",
+          "overlay": "Simulación creativa"
+        },
+        {
+          "start": 22,
+          "end": 27,
+          "visual": "CTA y cierre",
+          "voice": "Explora el concepto LUMO.",
+          "overlay": "Conoce LUMO"
+        }
+      ]
+    }
+  ]
+}
